@@ -19,6 +19,6 @@ pub struct Registers {
 
 impl Registers {
     pub fn new() -> Registers {
-        Registers { AF: Register { wide: 0 }, BC: Register { wide: 0 }, DE: Register { wide: 0 }, HL: Register { wide: 0 }, SP: 0, PC: 0 }
+        Registers { AF: Register { simple: (0, 0) }, BC: Register { simple: (0, 0) }, DE: Register { simple: (0, 0) }, HL: Register { simple: (0, 0) }, SP: 0, PC: 0 }
     }
 }

@@ -37,9 +37,8 @@ impl Instruction {
     #[cfg(not(debug_assertions))]
     fn log(&self) {}
 
-    pub fn get(opcode: OPCode) -> Instruction {
-        assert!(opcode < (INSTRUCTION_INFORMATION.len() as u8));
-
+    pub fn fetch(opcode: OPCode) -> Instruction {
+        assert!((opcode as usize) < INSTRUCTION_INFORMATION.len());
         return Instruction::from(&INSTRUCTION_INFORMATION[opcode as usize]);
     }
 
