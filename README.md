@@ -1,6 +1,9 @@
 # LameBoy
 
-A umptheenth worthless GameBoy emulator, written in Rust, just to learn how emulators work and have fun (or cry)
+An umpteenth worthless Game Boy emulator, written in Rust, just to learn how emulators work and have fun (or cry)
 
 ## Requirements
- - Rust (dev 1.66)
+ - Rust (development made with version 1.66)
+
+## Useful links
+- [CPU Opcodes](http://gameboy.mongenel.com/dmg/opcodes.html)
