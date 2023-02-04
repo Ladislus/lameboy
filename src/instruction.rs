@@ -37,8 +37,9 @@ impl Instruction {
     fn log(&self) {}
 
     pub fn fetch(opcode: OpCode) -> Instruction {
-        debug_assert!((opcode as usize) < INSTRUCTION_INFORMATION.len());
-        return INSTRUCTION_INFORMATION[opcode as usize].clone();
+        let opcode = opcode as usize;
+        debug_assert!(opcode < INSTRUCTION_INFORMATION.len());
+        return INSTRUCTION_INFORMATION[opcode].clone();
     }
 
     pub fn execute(&self, memory: &mut Memory) {
