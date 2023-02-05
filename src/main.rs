@@ -10,14 +10,16 @@ mod operations;
 
 use crate::gui::launch_gui;
 use crate::memory::Memory;
-use crate::instruction::{Instruction, Values};
+use crate::instruction::{instruction_from_opcode, GenericInstruction};
 
 fn main() {
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
-    let instr = Instruction::fetch(1);
-
-    instr.execute(&mut memory, Values { d16: 1 });
+    match instruction_from_opcode(1) {
+        GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
+        GenericInstruction::D16(instr) => instr.execute(&mut memory, 1),
+        _ => unimplemented!("GenericInstruction not implemented")
+    }
 
     launch_gui();
 }
