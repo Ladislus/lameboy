@@ -1,11 +1,11 @@
 use std::fmt::{Debug, Formatter, Result};
 
-use crate::operations::INSTRUCTION_INFORMATION;
+use crate::operations::INSTRUCTIONS;
 use crate::log;
 use crate::memory::Memory;
 
 pub type OpCode = u8;
-pub type InstructionFn = fn(&Instruction, &mut Memory);
+pub type InstructionFn = fn(&Instruction, &mut Memory, values: Values) -> ();
 
 #[derive(Clone)]
 pub struct Instruction {
@@ -14,6 +14,13 @@ pub struct Instruction {
     pub operands_count: usize,
     pub clock_tick: u8,
     pub function: InstructionFn,
+}
+
+#[derive(Clone, Copy)]
+pub union Values {
+    pub u3: u8,
+    pub d8: u8,
+    pub d16: u16,
 }
 
 impl Debug for Instruction {
@@ -38,12 +45,12 @@ impl Instruction {
 
     pub fn fetch(opcode: OpCode) -> Instruction {
         let opcode = opcode as usize;
-        debug_assert!(opcode < INSTRUCTION_INFORMATION.len());
-        return INSTRUCTION_INFORMATION[opcode].clone();
+        debug_assert!(opcode < INSTRUCTIONS.len());
+        return INSTRUCTIONS[opcode].clone();
     }
 
-    pub fn execute(&self, memory: &mut Memory) {
+    pub fn execute(&self, memory: &mut Memory, values: Values) {
         self.log();
-        (self.function)(self, memory);
+        (self.function)(self, memory, values);
     }
 }

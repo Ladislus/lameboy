@@ -1,3 +1,5 @@
+extern crate core;
+
 mod memory;
 mod gui;
 mod sound;
@@ -8,14 +10,14 @@ mod operations;
 
 use crate::gui::launch_gui;
 use crate::memory::Memory;
-use crate::instruction::Instruction;
+use crate::instruction::{Instruction, Values};
 
 fn main() {
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
-    let instr = Instruction::fetch(0);
+    let instr = Instruction::fetch(1);
 
-    instr.execute(&mut memory);
+    instr.execute(&mut memory, Values { d16: 1 });
 
     launch_gui();
 }

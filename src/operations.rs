@@ -1,29 +1,22 @@
-use crate::instruction::Instruction;
+use sdl2::libc::exit;
+use sdl2::log::log;
+use crate::instruction::{Instruction, Values};
+use crate::log;
 use crate::memory::Memory;
 
-pub fn unimplemented(instr: &Instruction, _memory: &mut Memory) {
+pub fn unimplemented(instr: &Instruction, _memory: &mut Memory, _values: Values) {
     unimplemented!("Function for {:?} is not implemented", instr);
 }
 
-pub fn noop(_instr: &Instruction, mut _memory: &mut Memory) {}
+pub fn noop(_instr: &Instruction, mut _memory: &mut Memory, _values: Values) {}
+
+pub fn ld_bc_d16(instr: &Instruction, mut memory: &mut Memory, values: Values) {
+    unsafe { memory.registers.BC.wide = values.d16; }
+}
 
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTION_INFORMATION: [Instruction; 17] = [
+pub static INSTRUCTIONS: [Instruction; 3] = [
     Instruction { opcode: 0x00, disassembly: "NOP", operands_count: 0, clock_tick: 4, function: noop },
-    Instruction { opcode: 0x01, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
+    Instruction { opcode: 0x01, disassembly: "LD BC, d16", operands_count: 1, clock_tick: 0, function: ld_bc_d16 },
     Instruction { opcode: 0x02, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x03, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x04, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x05, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x06, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x07, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x08, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x09, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0A, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0B, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0C, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0D, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0E, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x0F, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
-    Instruction { opcode: 0x10, disassembly: "", operands_count: 0, clock_tick: 0, function: unimplemented },
 ];
