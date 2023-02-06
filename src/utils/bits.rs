@@ -7,7 +7,7 @@ pub fn bit_size<T>(_: T) -> usize {
     return core::mem::size_of::<T>() * 8;
 }
 
-pub fn get_bit<T: Integer + std::ops::Shr<usize, Output = T> + From<u8>>(value: T, bit_index: usize) -> bool {
+pub fn get_bit<T: Integer + std::ops::Shr<usize, Output = T>>(value: T, bit_index: usize) -> bool {
     debug_assert!(bit_index < bit_size(value));
 
     let bit = ((value >> bit_index) & 1.into()) != 0.into();
@@ -31,7 +31,7 @@ pub fn clear_bit<T: Integer + std::ops::BitAnd<usize, Output = T>>(old_value: Va
     return new_value;
 }
 
-pub fn assign_bit<T: Integer + std::ops::Shl<usize, Output = T> + From<u8>>(old_value: T, bit_index: usize, status: bool) -> T {
+pub fn assign_bit<T: Integer + std::ops::Shl<usize, Output = T>>(old_value: T, bit_index: usize, status: bool) -> T {
     debug_assert!(bit_index < bit_size(old_value));
 
     let new_value = (old_value & !(<u8 as Into<T>>::into(1) << bit_index)) | (<u8 as Into<T>>::into(status as u8) << bit_index);
@@ -39,7 +39,7 @@ pub fn assign_bit<T: Integer + std::ops::Shl<usize, Output = T> + From<u8>>(old_
     return new_value;
 }
 
-fn check_carry_add<T: Integer + std::ops::Shl<usize, Output = T> + From<u8>>(value: T, operand: T, index: usize) -> bool {
+fn check_carry_add<T: Integer + std::ops::Shl<usize, Output = T>>(value: T, operand: T, index: usize) -> bool {
     debug_assert!(index < (bit_size(value) - 1));
 
     let test_mask: T = <u8 as Into<T>>::into(1) << (index + 1);
@@ -51,7 +51,7 @@ fn check_carry_add<T: Integer + std::ops::Shl<usize, Output = T> + From<u8>>(val
     return result;
 }
 
-fn check_carry_sub<T: Integer + From<u8> + std::ops::Shl<usize, Output = T>>(value: T, operand: T, bit_index: usize) -> bool
+fn check_carry_sub<T: Integer + std::ops::Shl<usize, Output = T>>(value: T, operand: T, bit_index: usize) -> bool
     where std::num::Wrapping<T>: Sub<Output = std::num::Wrapping<T>> {
     debug_assert!(bit_index < (bit_size(value) - 1));
 

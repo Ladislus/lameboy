@@ -10,8 +10,8 @@ impl<T: std::fmt::Display + std::fmt::UpperHex> HexPrintable for T {}
 pub trait Comparable: Eq + Ord {}
 impl<T: Eq + Ord> Comparable for T {}
 
-pub trait BitManipulable: Sized + Copy + std::ops::Add<Output = Self> + std::ops::Sub<Output = Self> + std::ops::Not<Output = Self> + std::ops::Shr<Output = Self> + std::ops::Shl<Output = Self> + std::ops::BitAnd<Output = Self> + std::ops::BitOr<Output = Self> + std::ops::BitXor<Output = Self> {}
+pub trait BitManipulable<Rhs=Self>: Sized + Copy + std::ops::Add<Rhs, Output = Self> + std::ops::Sub<Rhs, Output = Self> + std::ops::Not<Output = Self> + std::ops::Shr<Rhs, Output = Self> + std::ops::Shl<Rhs, Output = Self> + std::ops::BitAnd<Rhs, Output = Self> + std::ops::BitOr<Rhs, Output = Self> + std::ops::BitXor<Rhs, Output = Self> {}
 impl<T: Sized + Copy + std::ops::Add<Output = Self> + std::ops::Sub<Output = Self> + std::ops::Not<Output = Self> + std::ops::Shr<Output = Self> + std::ops::Shl<Output = Self> + std::ops::BitAnd<Output = Self> + std::ops::BitOr<Output = Self> + std::ops::BitXor<Output = Self>> BitManipulable for T {}
 
-pub trait Integer: Sized + Default + Copy + Comparable + BitManipulable + BinaryPrintable + OctalPrintable + HexPrintable {}
-impl<T: Sized + Default + Copy + Comparable + BitManipulable + BinaryPrintable + OctalPrintable + HexPrintable> Integer for T {}
+pub trait Integer: Sized + Default + Copy + Comparable + BitManipulable + BinaryPrintable + OctalPrintable + HexPrintable + From<u8> {}
+impl<T: Sized + Default + Copy + Comparable + BitManipulable + BinaryPrintable + OctalPrintable + HexPrintable + From<u8>> Integer for T {}
