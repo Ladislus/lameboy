@@ -10,10 +10,16 @@ mod operations;
 
 use crate::gui::launch_gui;
 use crate::memory::Memory;
-use crate::instruction::{instruction_from_opcode, GenericInstruction, OpCode};
+use crate::instruction::{GenericInstruction, OpCode, instruction_from_opcode};
 use crate::operations::INSTRUCTIONS;
 
+const PROGRAM_NAME: &'static str = "LameBoy";
+const PROGRAM_VERSION: &'static str = "0.0.1";
+
 fn main() {
+
+    log!("PROGRAM", format!("{} v{}", PROGRAM_NAME, PROGRAM_VERSION));
+
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
 

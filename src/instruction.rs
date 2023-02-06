@@ -46,16 +46,8 @@ impl<T> Debug for Instruction<T> {
 }
 
 impl<T> Instruction<T> {
-    #[cfg(debug_assertions)]
-    fn log(&self) {
-        log!("INSTRUCTION", format!("Running {:?}", self));
-    }
-
-    #[cfg(not(debug_assertions))]
-    fn log(&self) {}
-
     pub fn execute(&self, memory: &mut Memory, value: T) {
-        self.log();
+        log!("INSTRUCTION", format!("Executing {:?}", self));
         (self.function)(self, memory, value);
     }
 }

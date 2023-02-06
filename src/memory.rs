@@ -1,3 +1,4 @@
+use crate::log;
 use crate::register::{Registers, simple_to_wide, wide_to_simple};
 
 const SIMPLE_ADDR_START: usize = 0xFF00;
@@ -19,6 +20,9 @@ pub struct Memory {
 
 impl Memory {
     pub fn new(size: usize) -> Memory {
+
+        log!("MEMORY", format!("Creating {} bytes memory", size));
+
         Memory {
             size,
             memory: vec![0; size].into_boxed_slice(),
@@ -85,3 +89,5 @@ impl Memory {
 
     }
 }
+
+// TODO: Add tests
