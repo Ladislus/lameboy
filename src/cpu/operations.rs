@@ -1,6 +1,6 @@
-use crate::instruction::{GenericInstruction, Instruction};
-use crate::memory::Memory;
-use crate::utils::{assign_bit, check_half_carry_simple_add, check_half_carry_simple_sub, check_half_carry_wide_add, get_bit};
+use crate::cpu::instruction::{GenericInstruction, Instruction};
+use crate::cpu::memory::Memory;
+use crate::utils::bits::{assign_bit, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit};
 
 pub fn unimplemented<T>(instr: &Instruction<T>, _memory: &mut Memory, _value: T) {
     unimplemented!("Function for {:?} is not implemented", instr);
@@ -13,7 +13,7 @@ pub fn ld_bc_d16(_instr: &Instruction<u16>, memory: &mut Memory, value: u16) {
 }
 
 pub fn ld_bc_addr_a(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
-    memory.write_simple_far_addr(memory.registers.get_bc(), memory.registers.get_a());
+    memory.write_far_addr(memory.registers.get_bc(), memory.registers.get_a());
 }
 
 pub fn inc_bc(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
@@ -29,7 +29,7 @@ pub fn inc_b(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
     memory.registers.set_zero_flag(new_value == 0);
     memory.registers.set_subtraction_flag(false);
     // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_simple_add(old_value, 1));
+    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
 }
 
 pub fn dec_b(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
@@ -41,7 +41,7 @@ pub fn dec_b(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
     memory.registers.set_zero_flag(new_value == 0);
     memory.registers.set_subtraction_flag(true);
     // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_simple_sub(old_value, 1));
+    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
 }
 
 pub fn ld_b_d8(_instr: &Instruction<u8>, memory: &mut Memory, value: u8) {
@@ -90,7 +90,7 @@ pub fn add_hl_bc(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
 }
 
 pub fn ld_a_bc_addr(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
-    memory.registers.set_a(memory.read_simple_far_addr(memory.registers.get_bc()));
+    memory.registers.set_a(memory.read_far_addr(memory.registers.get_bc()));
 }
 
 pub fn dec_bc(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
@@ -106,7 +106,7 @@ pub fn inc_c(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
     memory.registers.set_zero_flag(new_value == 0);
     memory.registers.set_subtraction_flag(false);
     // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_simple_add(old_value, 1));
+    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
 }
 
 pub fn dec_c(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
@@ -118,7 +118,7 @@ pub fn dec_c(_instr: &Instruction<()>, memory: &mut Memory, _value: ()) {
     memory.registers.set_zero_flag(new_value == 0);
     memory.registers.set_subtraction_flag(true);
     // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_simple_sub(old_value, 1));
+    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
 }
 
 pub fn ld_c_d8(_instr: &Instruction<u8>, memory: &mut Memory, value: u8) {

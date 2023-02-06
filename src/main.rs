@@ -1,17 +1,11 @@
-extern crate core;
+use crate::cpu::instruction::{GenericInstruction, instruction_from_opcode, OpCode};
+use crate::cpu::memory::Memory;
+use crate::cpu::operations::INSTRUCTIONS;
+use crate::gui::gui::launch_gui;
 
-mod memory;
+mod cpu;
 mod gui;
-mod sound;
 mod utils;
-mod register;
-mod instruction;
-mod operations;
-
-use crate::gui::launch_gui;
-use crate::memory::Memory;
-use crate::instruction::{GenericInstruction, OpCode, instruction_from_opcode};
-use crate::operations::INSTRUCTIONS;
 
 const PROGRAM_NAME: &'static str = "LameBoy";
 const PROGRAM_VERSION: &'static str = "0.0.1";

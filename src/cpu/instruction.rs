@@ -1,8 +1,6 @@
-use std::fmt::{Debug, Formatter, Result};
-
-use crate::operations::INSTRUCTIONS;
+use crate::cpu::memory::Memory;
+use crate::cpu::operations::INSTRUCTIONS;
 use crate::log;
-use crate::memory::Memory;
 
 pub type OpCode = u8;
 pub type InstructionFn<T> = fn(&Instruction<T>, &mut Memory, values: T);
@@ -33,8 +31,8 @@ pub enum GenericInstruction {
     R8(Instruction<i8>)
 }
 
-impl<T> Debug for Instruction<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+impl<T> std::fmt::Debug for Instruction<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Instruction")
             .field("OP Code", &format_args!("{:#04X}", self.opcode))
             .field("ASM Name", &self.disassembly)
