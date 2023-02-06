@@ -69,16 +69,16 @@ impl Registers {
     pub fn set_l(&mut self, value: SimpleValue) { self.HL.as_two_simple.1 = value; }
 
     pub fn get_zero_flag(&self) -> bool { return get_bit(self.get_f(), ZERO_FLAG_OFFSET); }
-    pub fn set_zero_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), ZERO_FLAG_OFFSET, value) & CLEAR_MASK) }
+    pub fn set_zero_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), ZERO_FLAG_OFFSET, value) & CLEAR_MASK); }
 
     pub fn get_subtraction_flag(&self) -> bool { return get_bit(self.get_f(), SUBTRACTION_FLAG_OFFSET); }
-    pub fn set_subtraction_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), SUBTRACTION_FLAG_OFFSET, value) & CLEAR_MASK) }
+    pub fn set_subtraction_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), SUBTRACTION_FLAG_OFFSET, value) & CLEAR_MASK); }
 
     pub fn get_half_carry_flag(&self) -> bool { return get_bit(self.get_f(), HALF_CARRY_FLAG_OFFSET); }
-    pub fn set_half_carry_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), HALF_CARRY_FLAG_OFFSET, value) & CLEAR_MASK) }
+    pub fn set_half_carry_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), HALF_CARRY_FLAG_OFFSET, value) & CLEAR_MASK); }
 
     pub fn get_carry_flag(&self) -> bool { return get_bit(self.get_f(), CARRY_FLAG_OFFSET); }
-    pub fn set_carry_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), CARRY_FLAG_OFFSET, value) & CLEAR_MASK) }
+    pub fn set_carry_flag(&mut self, value: bool) { self.set_f(assign_bit(self.get_f(), CARRY_FLAG_OFFSET, value) & CLEAR_MASK); }
 }
 
 pub fn simple_to_wide(simple: &SimpleRegister) -> WideRegister {

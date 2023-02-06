@@ -72,11 +72,11 @@ fn check_half_carry_sub<T: Into<usize> + Display + std::fmt::Binary + Copy>(old_
 }
 
 pub fn check_half_carry_simple_add(old_value: SimpleValue, value: SimpleValue) -> bool {
-    return check_half_carry_add::<SimpleValue>(old_value, value, 3);
+    return check_half_carry_add(old_value, value, 3);
 }
 
 pub fn check_half_carry_simple_sub(old_value: SimpleValue, value: SimpleValue) -> bool {
-    return check_half_carry_sub::<SimpleValue>(old_value, value, 3)
+    return check_half_carry_sub(old_value, value, 3)
 }
 
 pub fn check_half_carry_wide_add(old_value: WideValue, value: WideValue) -> bool {
@@ -84,7 +84,7 @@ pub fn check_half_carry_wide_add(old_value: WideValue, value: WideValue) -> bool
 }
 
 pub fn check_half_carry_wide_sub(old_value: WideValue, value: WideValue) -> bool {
-    return check_half_carry_sub::<WideValue>(old_value, value, 11)
+    return check_half_carry_sub(old_value, value, 11)
 }
 
 // TODO Add tests
