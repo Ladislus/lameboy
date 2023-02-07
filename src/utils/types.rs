@@ -1,5 +1,7 @@
 pub type Byte = u8;
 
+pub type Void = ();
+
 pub type Value = u8;
 pub type WideValue = u16;
 
