@@ -1,5 +1,5 @@
 use crate::utils::bits::{assign_bit, get_bit};
-use crate::utils::types::{Value, WideValue};
+use crate::utils::types::{FarAddress, Value, WideValue};
 
 pub type PairRegister = (Value, Value);
 pub type WideRegister = WideValue;
@@ -23,8 +23,8 @@ pub struct RegisterGroup {
     DE: Register,
     HL: Register,
 
-    pub SP: u16,
-    pub PC: u16,
+    pub SP: FarAddress,
+    pub PC: FarAddress,
 }
 
 impl RegisterGroup {
