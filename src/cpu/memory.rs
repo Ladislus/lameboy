@@ -1,4 +1,3 @@
-use sdl2::log::log;
 use crate::cpu::register::RegisterGroup;
 use crate::log;
 use crate::utils::conversions::{pair_to_wide, wide_to_pair};

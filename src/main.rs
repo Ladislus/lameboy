@@ -1,6 +1,5 @@
-use crate::cpu::instruction::{GenericInstruction, instruction_from_opcode, OpCode};
+use crate::cpu::instruction::{GenericInstruction, instruction_from_opcode};
 use crate::cpu::memory::Memory;
-use crate::cpu::operations::INSTRUCTIONS;
 use crate::gui::gui::launch_gui;
 
 mod cpu;
@@ -16,16 +15,15 @@ fn main() {
 
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
+    memory.registers.set_a(0b1100_0000);
 
     // TODO: Remove after test
-    for idx in 0..INSTRUCTIONS.len() {
-        match instruction_from_opcode(idx as OpCode) {
-            GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
-            GenericInstruction::D16(instr) => instr.execute(&mut memory, 1),
-            GenericInstruction::D8(instr) => instr.execute(&mut memory, 1),
-            GenericInstruction::A16(instr) => instr.execute(&mut memory, 100),
-            instr @ _ => unimplemented!("GenericInstruction {:?} not implemented", instr)
-        }
+    match instruction_from_opcode(0x7) {
+        GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
+        GenericInstruction::DATA16(instr) => instr.execute(&mut memory, 1),
+        GenericInstruction::DATA8(instr) => instr.execute(&mut memory, 1),
+        GenericInstruction::ADDR16(instr) => instr.execute(&mut memory, 100),
+        instr @ _ => unimplemented!("GenericInstruction {:?} not implemented", instr)
     }
 
     launch_gui();
