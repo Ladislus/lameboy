@@ -7,6 +7,8 @@ pub fn bit_size<T>(_: T) -> usize {
     return core::mem::size_of::<T>() * 8;
 }
 
+pub fn max_bit_index<T>(t: T) -> usize { return bit_size(t) - 1; }
+
 pub fn get_bit<T: Integer + std::ops::Shr<usize, Output = T>>(value: T, bit_index: usize) -> bool {
     debug_assert!(bit_index < bit_size(value));
 

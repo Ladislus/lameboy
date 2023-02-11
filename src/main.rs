@@ -15,10 +15,10 @@ fn main() {
 
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
-    memory.registers.set_a(0b1100_0000);
+    // memory.registers.set_a(0b1100_0000);
+    // memory.registers.set_carry_flag(false);
 
-    // TODO: Remove after test
-    match instruction_from_opcode(0x17) {
+    match instruction_from_opcode(0x27) {
         GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
         GenericInstruction::DATA16(instr) => instr.execute(&mut memory, 1),
         GenericInstruction::DATA8(instr) => instr.execute(&mut memory, 1),

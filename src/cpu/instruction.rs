@@ -1,10 +1,18 @@
 use crate::cpu::memory::Memory;
 use crate::cpu::operations::INSTRUCTIONS;
 use crate::log;
-use crate::utils::types::{FarAddress, NearAddress, OffsetAddress, Value, WideValue};
+use crate::utils::types::{FarAddress, NearAddress, AddressOffset, Value, Void, WideValue};
 
 pub type OpCode = u8;
 pub type InstructionFn<T> = fn(&Instruction<T>, &mut Memory, values: T);
+
+// Instruction type aliases
+pub type VoidInstruction = Instruction<Void>;
+pub type ValueInstruction = Instruction<Value>;
+pub type WideValueInstruction = Instruction<WideValue>;
+pub type NearAddressInstruction = Instruction<NearAddress>;
+pub type FarAddressInstruction = Instruction<FarAddress>;
+pub type OffsetInstruction = Instruction<AddressOffset>;
 
 #[derive(Clone, Copy)]
 pub struct Instruction<T> {
@@ -29,7 +37,7 @@ pub enum GenericInstruction {
     /// Takes 16-bit little endian address
     ADDR16(Instruction<FarAddress>),
     /// Takes 8-bit signed data
-    OFFSET(Instruction<OffsetAddress>)
+    OFFSET(Instruction<AddressOffset>)
 }
 
 impl<T> std::fmt::Debug for Instruction<T> {
