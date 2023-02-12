@@ -1,4 +1,5 @@
 use crate::utils::bits::{assign_bit, get_bit};
+use crate::utils::log::log;
 use crate::utils::types::{FarAddress, PairRegister, Value, WideRegister, WideValue};
 
 pub union Register {
@@ -35,6 +36,24 @@ impl RegisterGroup {
             SP: 0,
             PC: 0
         }
+    }
+
+    #[cfg(debug_assertions)]
+    pub fn debug(&self) {
+        unsafe {
+            log!("REGISTER", format!("AF: ({}, {}) or {}", self.AF.as_pair.0, self.AF.as_pair.1, self.AF.as_wide));
+            log!("REGISTER", format!("BC: ({}, {}) or {}", self.BC.as_pair.0, self.BC.as_pair.1, self.BC.as_wide));
+            log!("REGISTER", format!("DE: ({}, {}) or {}", self.DE.as_pair.0, self.DE.as_pair.1, self.DE.as_wide));
+            log!("REGISTER", format!("HL: ({}, {}) or {}", self.HL.as_pair.0, self.HL.as_pair.1, self.HL.as_wide));
+        }
+
+        log!("REGISTER", format!("SP: {}", self.SP));
+        log!("REGISTER", format!("PC: {}", self.PC));
+
+        log!("REGISTER", format!("Z: {}", self.get_zero_flag() as u8));
+        log!("REGISTER", format!("S: {}", self.get_subtraction_flag() as u8));
+        log!("REGISTER", format!("H: {}", self.get_half_carry_flag() as u8));
+        log!("REGISTER", format!("C: {}", self.get_carry_flag() as u8));
     }
 
     pub fn get_af(&self) -> WideValue { unsafe { return self.AF.as_wide; } }
