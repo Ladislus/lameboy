@@ -1,6 +1,6 @@
 use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
-use crate::log;
+use crate::cpu::template::{template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld};
 use crate::utils::bits::{assign_bit, bit_size, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit, max_bit_index};
 use crate::utils::log::log;
 use crate::utils::types::{FarAddress, AddressOffset, Value, Void, WideValue};
@@ -12,7 +12,7 @@ pub fn unimplemented<T>(instr: &Instruction<T>, _memory: &mut Memory, _value: T)
 pub fn noop(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {}
 
 pub fn ld_bc_d16(_instr: &WideValueInstruction, memory: &mut Memory, value: WideValue) {
-    memory.registers.set_bc(value);
+    template_ld!(memory.registers.BC.as_wide, value);
 }
 
 pub fn ld_bc_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -20,35 +20,19 @@ pub fn ld_bc_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void)
 }
 
 pub fn inc_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.registers.set_bc(memory.registers.get_bc() + 1);
+    template_inc_wide!(memory.registers.BC.as_wide);
 }
 
 pub fn inc_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_b();
-    let new_value = old_value + 1;
-    memory.registers.set_b(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
+    template_inc_value!(memory, memory.registers.BC.as_pair.0);
 }
 
 pub fn dec_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_b();
-    let new_value = old_value - 1;
-    memory.registers.set_b(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(true);
-    // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
+    template_dec_value!(memory, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_b_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    memory.registers.set_b(value);
+    template_ld!(memory.registers.BC.as_pair.0, value);
 }
 
 pub fn rlca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -98,35 +82,19 @@ pub fn ld_a_bc_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void)
 }
 
 pub fn dec_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.registers.set_bc(memory.registers.get_bc() - 1);
+    template_dec_wide!(memory.registers.BC.as_wide);
 }
 
 pub fn inc_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_c();
-    let new_value = old_value + 1;
-    memory.registers.set_c(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
+    template_inc_value!(memory, memory.registers.BC.as_pair.1);
 }
 
 pub fn dec_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_c();
-    let new_value = old_value - 1;
-    memory.registers.set_c(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(true);
-    // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
+    template_dec_value!(memory, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_c_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    memory.registers.set_c(value);
+    template_ld!(memory.registers.BC.as_pair.1, value);
 }
 
 pub fn rrca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -157,7 +125,7 @@ pub fn stop(_instr: &Instruction<u8>, _memory: &mut Memory, _value: u8) {
 }
 
 pub fn ld_de_d16(_instr: &WideValueInstruction, memory: &mut Memory, value: WideValue) {
-    memory.registers.set_de(value);
+    template_ld!(memory.registers.DE.as_wide, value);
 }
 
 pub fn ld_de_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -165,35 +133,19 @@ pub fn ld_de_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void)
 }
 
 pub fn inc_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.registers.set_de(memory.registers.get_de() + 1);
+    template_inc_wide!(memory.registers.DE.as_wide);
 }
 
 pub fn inc_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_d();
-    let new_value = old_value + 1;
-    memory.registers.set_d(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
+    template_inc_value!(memory, memory.registers.DE.as_pair.0);
 }
 
 pub fn dec_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_d();
-    let new_value = old_value - 1;
-    memory.registers.set_d(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(true);
-    // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
+    template_dec_value!(memory, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_d_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    memory.registers.set_d(value);
+    template_ld!(memory.registers.DE.as_pair.0, value)
 }
 
 pub fn rla(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -241,35 +193,19 @@ pub fn ld_a_de_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void)
 }
 
 pub fn dec_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.registers.set_de(memory.registers.get_de() - 1);
+    template_dec_wide!(memory.registers.DE.as_wide);
 }
 
 pub fn inc_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_e();
-    let new_value = old_value + 1;
-    memory.registers.set_e(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
+    template_inc_value!(memory, memory.registers.DE.as_pair.1);
 }
 
 pub fn dec_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_e();
-    let new_value = old_value - 1;
-    memory.registers.set_e(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(true);
-    // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
+    template_dec_value!(memory, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_e_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    memory.registers.set_e(value);
+    template_ld!(memory.registers.DE.as_pair.1, value);
 }
 
 pub fn rra(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -281,6 +217,7 @@ pub fn rra(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     log!("OPERATION", format!("{:#0width$b} + carry: {} => {:#0width$b} + carry: {}", old_value, old_carry as u8, new_value, popped_value as u8, width = bit_size(old_value) + 2));
 
     memory.registers.set_a(new_value);
+
     memory.registers.set_zero_flag(false);
     memory.registers.set_subtraction_flag(false);
     memory.registers.set_half_carry_flag(false);
@@ -295,7 +232,7 @@ pub fn jr_nz_r8(_instr: &OffsetInstruction, memory: &mut Memory, value: AddressO
 }
 
 pub fn ld_hl_d16(_instr: &WideValueInstruction, memory: &mut Memory, value: WideValue) {
-    memory.registers.set_hl(value);
+    template_ld!(memory.registers.HL.as_wide, value);
 }
 
 pub fn ld_hl_addr_plus_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -306,35 +243,20 @@ pub fn ld_hl_addr_plus_a(_instr: &VoidInstruction, memory: &mut Memory, _value: 
 }
 
 pub fn inc_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.registers.set_hl(memory.registers.get_hl() + 1);
+    template_inc_wide!(memory.registers.HL.as_wide);
 }
 
 pub fn inc_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_h();
-    let new_value = old_value + 1;
-    memory.registers.set_h(new_value);
-
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 3.
-    memory.registers.set_half_carry_flag(check_half_carry_add(old_value, 1));
+    template_inc_value!(memory, memory.registers.HL.as_pair.0);
 }
 
 pub fn dec_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_h();
-    let new_value = old_value - 1;
-    memory.registers.set_h(new_value);
+    template_dec_value!(memory, memory.registers.HL.as_pair.0);
 
-    // Operation flags
-    memory.registers.set_zero_flag(new_value == 0);
-    memory.registers.set_subtraction_flag(true);
-    // H => Set if borrow from bit 4.
-    memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, 1));
 }
 
 pub fn ld_h_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    memory.registers.set_h(value);
+    template_ld!(memory.registers.HL.as_pair.0, value);
 }
 
 // TODO: Check

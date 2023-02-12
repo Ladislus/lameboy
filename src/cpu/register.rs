@@ -15,10 +15,10 @@ const CLEAR_MASK: Value = 0b1111_0000;
 
 #[allow(non_snake_case)]
 pub struct RegisterGroup {
-    AF: Register,
-    BC: Register,
-    DE: Register,
-    HL: Register,
+    pub AF: Register,
+    pub BC: Register,
+    pub DE: Register,
+    pub HL: Register,
 
     pub SP: FarAddress,
     pub PC: FarAddress,
