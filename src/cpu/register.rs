@@ -38,24 +38,6 @@ impl RegisterGroup {
         }
     }
 
-    #[cfg(debug_assertions)]
-    pub fn debug(&self) {
-        unsafe {
-            log!("REGISTER", format!("AF: ({}, {}) or {}", self.AF.as_pair.0, self.AF.as_pair.1, self.AF.as_wide));
-            log!("REGISTER", format!("BC: ({}, {}) or {}", self.BC.as_pair.0, self.BC.as_pair.1, self.BC.as_wide));
-            log!("REGISTER", format!("DE: ({}, {}) or {}", self.DE.as_pair.0, self.DE.as_pair.1, self.DE.as_wide));
-            log!("REGISTER", format!("HL: ({}, {}) or {}", self.HL.as_pair.0, self.HL.as_pair.1, self.HL.as_wide));
-        }
-
-        log!("REGISTER", format!("SP: {}", self.SP));
-        log!("REGISTER", format!("PC: {}", self.PC));
-
-        log!("REGISTER", format!("Z: {}", self.get_zero_flag() as u8));
-        log!("REGISTER", format!("S: {}", self.get_subtraction_flag() as u8));
-        log!("REGISTER", format!("H: {}", self.get_half_carry_flag() as u8));
-        log!("REGISTER", format!("C: {}", self.get_carry_flag() as u8));
-    }
-
     pub fn get_af(&self) -> WideValue { unsafe { return self.AF.as_wide; } }
     pub fn set_af(&mut self, value: WideValue) { self.AF.as_wide = value; }
     pub fn get_a(&self) -> Value { unsafe { return self.AF.as_pair.0; } }
@@ -95,4 +77,23 @@ impl RegisterGroup {
 
     pub fn get_carry_flag(&self) -> bool { return get_bit(self.get_f(), CARRY_FLAG_OFFSET); }
     pub fn set_carry_flag(&mut self, status: bool) { self.set_f(assign_bit(self.get_f(), CARRY_FLAG_OFFSET, status) & CLEAR_MASK); }
+}
+
+impl std::fmt::Debug for RegisterGroup {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        unsafe {
+            f.debug_struct("Registers")
+                .field("AF", &format_args!("({}, {}) | {}", self.AF.as_pair.0, self.AF.as_pair.1, self.AF.as_wide))
+                .field("BC", &format_args!("({}, {}) | {}", self.BC.as_pair.0, self.BC.as_pair.1, self.BC.as_wide))
+                .field("DE", &format_args!("({}, {}) | {}", self.DE.as_pair.0, self.DE.as_pair.1, self.DE.as_wide))
+                .field("HL", &format_args!("({}, {}) | {}", self.HL.as_pair.0, self.HL.as_pair.1, self.HL.as_wide))
+                .field("SP", &self.SP)
+                .field("PC", &self.PC)
+                .field("Z", &(self.get_zero_flag() as u8))
+                .field("S", &(self.get_subtraction_flag() as u8))
+                .field("HC", &(self.get_half_carry_flag() as u8))
+                .field("C", &(self.get_carry_flag() as u8))
+                .finish()
+        }
+    }
 }
