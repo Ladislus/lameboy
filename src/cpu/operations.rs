@@ -1,6 +1,6 @@
 use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
-use crate::cpu::template::{template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld};
+use crate::cpu::template::{template_add_hl, template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld};
 use crate::utils::bits::{assign_bit, bit_size, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit, max_bit_index};
 use crate::utils::log::log;
 use crate::utils::types::{FarAddress, AddressOffset, Value, Void, WideValue};
@@ -63,18 +63,7 @@ pub fn ld_a16_addr_sp(_instr: &FarAddressInstruction, memory: &mut Memory, value
 }
 
 pub fn add_hl_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_hl();
-    let bc_value = memory.registers.get_bc();
-
-    let (result, has_overflown) = old_value.overflowing_add(bc_value);
-
-    memory.registers.set_hl(result);
-
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 11.
-    memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, bc_value));
-    // C => Set if overflow from bit 15.
-    memory.registers.set_carry_flag(has_overflown);
+    template_add_hl!(memory, memory.registers.BC.as_wide);
 }
 
 pub fn ld_a_bc_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -145,7 +134,7 @@ pub fn dec_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_d_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
-    template_ld!(memory.registers.DE.as_pair.0, value)
+    template_ld!(memory.registers.DE.as_pair.0, value);
 }
 
 pub fn rla(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -174,18 +163,7 @@ pub fn jr_r8(_instr: &OffsetInstruction, memory: &mut Memory, value: AddressOffs
 }
 
 pub fn add_hl_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let old_value = memory.registers.get_hl();
-    let de_value = memory.registers.get_de();
-
-    let (result, has_overflown) = old_value.overflowing_add(de_value);
-
-    memory.registers.set_hl(result);
-
-    memory.registers.set_subtraction_flag(false);
-    // H => Set if overflow from bit 11.
-    memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, de_value));
-    // C => Set if overflow from bit 15.
-    memory.registers.set_carry_flag(has_overflown);
+    template_add_hl!(memory, memory.registers.DE.as_wide);
 }
 
 pub fn ld_a_de_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
@@ -289,8 +267,19 @@ pub fn daa(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     log!("OPERATION", format!("{} ({:#0width$b}) + C={} + H={} => {} ({:#0width$b}) + C={} + Z={}", old_value, old_value, old_carry_flag as u8, old_half_carry_flag as u8, new_value, new_value, memory.registers.get_carry_flag() as u8, memory.registers.get_zero_flag() as u8, width = bit_size(old_value) + 2));
 }
 
+pub fn jr_z_r8(_instr: &OffsetInstruction, memory: &mut Memory, value: AddressOffset) {
+    if memory.registers.get_zero_flag() {
+        // To do "safe" signed + unsigned operation, do a wrapping add with both operands interpreted as unsigned
+        memory.registers.PC = memory.registers.PC.wrapping_add(value as FarAddress);
+    }
+}
+
+pub fn add_hl_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_add_hl!(memory, memory.registers.HL.as_wide);
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 40] = [
+pub static INSTRUCTIONS: [GenericInstruction; 42] = [
     GenericInstruction::VOID(Instruction { opcode: 0x00, disassembly: "NOP", byte_size: 1, operands_count: 0, clock_tick: 4, function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(Instruction { opcode: 0x02, disassembly: "LD (BC), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_bc_addr_a }),
@@ -331,6 +320,8 @@ pub static INSTRUCTIONS: [GenericInstruction; 40] = [
     GenericInstruction::VOID(Instruction { opcode: 0x25, disassembly: "DEC H", byte_size: 1, operands_count: 0, clock_tick: 4, function: dec_h }),
     GenericInstruction::DATA8(Instruction { opcode: 0x26, disassembly: "LD H, d8", byte_size: 2, operands_count: 1, clock_tick: 8, function: ld_h_d8 }),
     GenericInstruction::VOID(Instruction { opcode: 0x27, disassembly: "DAA", byte_size: 1, operands_count: 0, clock_tick: 4, function: daa }),
+    GenericInstruction::OFFSET(Instruction { opcode: 0x28, disassembly: "JR Z, r8", byte_size: 2, operands_count: 1, clock_tick: 8, function: jr_z_r8 }),
+    GenericInstruction::VOID(Instruction { opcode: 0x29, disassembly: "ADD HL, HL", byte_size: 1, operands_count: 0, clock_tick: 8, function: add_hl_hl }),
 ];
 
 // TODO: add tests
