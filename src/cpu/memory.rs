@@ -1,6 +1,6 @@
 use crate::cpu::register::RegisterGroup;
-use crate::log;
 use crate::utils::conversions::{pair_to_wide, wide_to_pair};
+use crate::utils::log::log;
 use crate::utils::types::{Byte, FarAddress, NearAddress, Value, WideValue};
 
 const NEAR_ADDR_START: usize = 0xFF00;

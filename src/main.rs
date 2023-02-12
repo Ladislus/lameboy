@@ -1,6 +1,7 @@
 use crate::cpu::instruction::{GenericInstruction, instruction_from_opcode};
 use crate::cpu::memory::Memory;
 use crate::gui::gui::launch_gui;
+use crate::utils::log::log;
 
 mod cpu;
 mod gui;

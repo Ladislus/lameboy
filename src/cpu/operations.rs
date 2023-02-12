@@ -2,6 +2,7 @@ use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruct
 use crate::cpu::memory::Memory;
 use crate::log;
 use crate::utils::bits::{assign_bit, bit_size, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit, max_bit_index};
+use crate::utils::log::log;
 use crate::utils::types::{FarAddress, AddressOffset, Value, Void, WideValue};
 
 pub fn unimplemented<T>(instr: &Instruction<T>, _memory: &mut Memory, _value: T) {

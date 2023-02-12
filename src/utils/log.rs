@@ -1,4 +1,3 @@
-#[macro_export]
 macro_rules! function_path {
     () => {{
         fn f() {}
@@ -10,7 +9,6 @@ macro_rules! function_path {
     }};
 }
 
-#[macro_export]
 macro_rules! function_name {
     () => {{
         fn f() {}
@@ -27,18 +25,20 @@ macro_rules! function_name {
     }};
 }
 
+pub(crate) use {function_name, function_path};
+
 #[cfg(debug_assertions)]
-#[macro_export]
 macro_rules! log {
     ($prefix:literal, $msg:expr) => {
         // Because macro arguments don't have types, force type by assigning to variable which is typed
         let _p: &str = $prefix;
-        println!("{:<70}\t{}", format!("{:<15} {:<30} {:<20}", format!("[{}]", $prefix), format!("({}:{})", file!(), line!()), format!("<{}>", crate::function_name!())), $msg);
+        println!("{:<70}\t{}", format!("{:<15} {:<30} {:<20}", format!("[{}]", $prefix), format!("({}:{})", file!(), line!()), format!("<{}>", crate::utils::log::function_name!())), $msg);
     };
 }
 
 #[cfg(not(debug_assertions))]
-#[macro_export]
 macro_rules! log {
     ($prefix:literal, $msg:expr) => ();
 }
+
+pub(crate) use log;

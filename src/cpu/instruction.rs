@@ -1,6 +1,6 @@
 use crate::cpu::memory::Memory;
 use crate::cpu::operations::INSTRUCTIONS;
-use crate::log;
+use crate::utils::log::log;
 use crate::utils::types::{FarAddress, NearAddress, AddressOffset, Value, Void, WideValue};
 
 pub type OpCode = u8;
