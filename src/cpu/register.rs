@@ -1,8 +1,5 @@
 use crate::utils::bits::{assign_bit, get_bit};
-use crate::utils::types::{FarAddress, Value, WideValue};
-
-pub type PairRegister = (Value, Value);
-pub type WideRegister = WideValue;
+use crate::utils::types::{FarAddress, PairRegister, Value, WideRegister, WideValue};
 
 pub union Register {
     pub as_wide: WideRegister,

@@ -1,4 +1,5 @@
 pub mod instruction;
 pub mod memory;
-pub mod operations;
-pub mod register;
+mod operations;
+mod register;
+mod template;

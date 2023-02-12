@@ -1,5 +1,4 @@
-use crate::cpu::register::{PairRegister, WideRegister};
-use crate::utils::types::{Value, WideValue};
+use crate::utils::types::{PairRegister, Value, WideRegister, WideValue};
 
 // TODO: Check endianness
 pub fn pair_to_wide(pair: &PairRegister) -> WideRegister {
