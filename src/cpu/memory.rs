@@ -78,7 +78,7 @@ impl Memory {
     // TODO: Check endianness
     pub fn write_wide_far_addr(&mut self, addr: FarAddress, value: WideValue) {
         let addr = addr as usize;
-        debug_assert!((addr + 1)< self.size);
+        debug_assert!((addr + 1) < self.size);
         log!("MEMORY", format!("Write {:#x} at address ${:#x}", value, addr));
         let values = wide_to_pair(value);
         self.memory[addr] = values.0;

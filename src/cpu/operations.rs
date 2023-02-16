@@ -213,7 +213,7 @@ pub fn ld_hl_d16(_instr: &WideValueInstruction, memory: &mut Memory, value: Wide
     template_ld!(memory.registers.HL.as_wide, value);
 }
 
-pub fn ld_hl_addr_plus_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn ld_hli_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     // This is sometimes written as ‘LD (HLI),A’, or ‘LDI (HL),A’.
     let hl_value = memory.registers.get_hl();
     memory.write_far_addr(hl_value, memory.registers.get_a());
@@ -278,8 +278,39 @@ pub fn add_hl_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.HL.as_wide);
 }
 
+pub fn ld_a_hli_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    let hl_value = memory.registers.get_hl();
+    let read_value = memory.read_far_addr(hl_value);
+
+    memory.registers.set_hl(hl_value + 1);
+    memory.registers.set_a(read_value);
+}
+
+pub fn dec_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_dec_wide!(memory.registers.HL.as_wide);
+}
+
+pub fn inc_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_inc_value!(memory, memory.registers.HL.as_pair.1);
+}
+
+pub fn dec_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_dec_value!(memory, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_l_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+    template_ld!(memory.registers.HL.as_pair.1, value);
+}
+
+pub fn cpl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.registers.set_a(!memory.registers.get_a());
+
+    memory.registers.set_subtraction_flag(true);
+    memory.registers.set_half_carry_flag(true);
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 42] = [
+pub static INSTRUCTIONS: [GenericInstruction; 48] = [
     GenericInstruction::VOID(Instruction { opcode: 0x00, disassembly: "NOP", byte_size: 1, operands_count: 0, clock_tick: 4, function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(Instruction { opcode: 0x02, disassembly: "LD (BC), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_bc_addr_a }),
@@ -314,7 +345,7 @@ pub static INSTRUCTIONS: [GenericInstruction; 42] = [
     GenericInstruction::VOID(Instruction { opcode: 0x1F, disassembly: "RRA", byte_size: 1, operands_count: 0, clock_tick: 4, function: rra }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x20, disassembly: "JR NZ, r8", byte_size: 1, operands_count: 1, clock_tick: 8, function: jr_nz_r8 }),
     GenericInstruction::DATA16(Instruction { opcode: 0x21, disassembly: "LD HL, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_hl_d16 }),
-    GenericInstruction::VOID(Instruction { opcode: 0x22, disassembly: "LD (HL+), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_plus_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x22, disassembly: "LD (HL+), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hli_addr_a }),
     GenericInstruction::VOID(Instruction { opcode: 0x23, disassembly: "INC HL", byte_size: 1, operands_count: 0, clock_tick: 8, function: inc_hl }),
     GenericInstruction::VOID(Instruction { opcode: 0x24, disassembly: "INC H", byte_size: 1, operands_count: 0, clock_tick: 4, function: inc_h }),
     GenericInstruction::VOID(Instruction { opcode: 0x25, disassembly: "DEC H", byte_size: 1, operands_count: 0, clock_tick: 4, function: dec_h }),
@@ -322,6 +353,12 @@ pub static INSTRUCTIONS: [GenericInstruction; 42] = [
     GenericInstruction::VOID(Instruction { opcode: 0x27, disassembly: "DAA", byte_size: 1, operands_count: 0, clock_tick: 4, function: daa }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x28, disassembly: "JR Z, r8", byte_size: 2, operands_count: 1, clock_tick: 8, function: jr_z_r8 }),
     GenericInstruction::VOID(Instruction { opcode: 0x29, disassembly: "ADD HL, HL", byte_size: 1, operands_count: 0, clock_tick: 8, function: add_hl_hl }),
+    GenericInstruction::VOID(Instruction { opcode: 0x2A, disassembly: "LD A, (HL+)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_a_hli_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x2B, disassembly: "DEC HL", byte_size: 1, operands_count: 0, clock_tick: 8, function: dec_hl }),
+    GenericInstruction::VOID(Instruction { opcode: 0x2C, disassembly: "INC L", byte_size: 1, operands_count: 0, clock_tick: 4, function: inc_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x2D, disassembly: "DEC L", byte_size: 1, operands_count: 0, clock_tick: 4, function: dec_l }),
+    GenericInstruction::DATA8(Instruction { opcode: 0x2E, disassembly: "LD L, d8", byte_size: 2, operands_count: 1, clock_tick: 8, function: ld_l_d8 }),
+    GenericInstruction::VOID(Instruction { opcode: 0x2F, disassembly: "CPL", byte_size: 1, operands_count: 0, clock_tick: 4, function: cpl }),
 ];
 
 // TODO: add tests
