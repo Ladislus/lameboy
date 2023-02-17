@@ -938,7 +938,7 @@ pub fn ret_nz(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     if !memory.registers.get_zero_flag() {
         // TODO: Check
         debug_assert!(memory.stack.len() > 0);
-        memory.registers.SP = memory.stack.pop().unwrap();
+        memory.registers.PC = memory.stack.pop().unwrap();
     }
 }
 
