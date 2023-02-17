@@ -91,4 +91,5 @@ macro_rules! template_add_hl {
 }
 
 // Trick to export macro to current crate, without using "macro_export"
+#[allow(unused_imports)]
 pub(super) use {template_inc_wide, template_dec_wide, template_inc_value, template_dec_value, template_ld, template_add_hl, template_add_a};

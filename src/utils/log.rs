@@ -25,6 +25,7 @@ macro_rules! function_name {
     }};
 }
 
+#[allow(unused_imports)]
 pub(crate) use {function_name, function_path};
 
 #[cfg(debug_assertions)]

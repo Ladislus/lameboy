@@ -1,5 +1,3 @@
-use std::ops::Sub;
-use crate::log;
 use crate::utils::traits::Integer;
 use crate::utils::types::{Value, WideValue};
 
@@ -54,7 +52,7 @@ fn check_carry_add<T: Integer + std::ops::Shl<usize, Output = T>>(value: T, oper
 }
 
 fn check_carry_sub<T: Integer + std::ops::Shl<usize, Output = T>>(value: T, operand: T, bit_index: usize) -> bool
-    where std::num::Wrapping<T>: Sub<Output = std::num::Wrapping<T>> {
+    where std::num::Wrapping<T>: std::ops::Sub<Output = std::num::Wrapping<T>> {
     debug_assert!(bit_index < (bit_size(value) - 1));
 
     let test_mask: T = <u8 as Into<T>>::into(1) << (bit_index + 1);

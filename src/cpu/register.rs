@@ -1,5 +1,4 @@
 use crate::utils::bits::{assign_bit, get_bit};
-use crate::utils::log::log;
 use crate::utils::types::{FarAddress, PairRegister, Value, WideRegister, WideValue};
 
 pub union Register {
