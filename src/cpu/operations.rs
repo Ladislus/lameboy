@@ -2,7 +2,7 @@ use sdl2::libc::CTRL_CMD_DELFAMILY;
 
 use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
-use crate::cpu::template::{template_add_a, template_add_hl, template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld, template_sub_a};
+use crate::cpu::template::{template_add_a, template_add_hl, template_and_a, template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld, template_sub_a, template_xor_a};
 use crate::utils::bits::{assign_bit, bit_size, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit, max_bit_index};
 use crate::utils::log::log;
 use crate::utils::types::{FarAddress, AddressOffset, Value, Void, WideValue};
@@ -806,8 +806,72 @@ pub fn sbc_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
+pub fn and_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.BC.as_pair.0);
+}
+
+pub fn and_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.BC.as_pair.1);
+}
+
+pub fn and_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.DE.as_pair.0);
+}
+
+pub fn and_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.DE.as_pair.1);
+}
+
+pub fn and_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.HL.as_pair.0);
+}
+
+pub fn and_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.HL.as_pair.1);
+}
+
+pub fn and_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn and_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_and_a!(memory, memory.registers.AF.as_pair.0);
+}
+
+pub fn xor_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.BC.as_pair.0);
+}
+
+pub fn xor_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.BC.as_pair.1);
+}
+
+pub fn xor_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.DE.as_pair.0);
+}
+
+pub fn xor_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.DE.as_pair.1);
+}
+
+pub fn xor_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.HL.as_pair.0);
+}
+
+pub fn xor_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.HL.as_pair.1);
+}
+
+pub fn xor_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn xor_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_xor_a!(memory, memory.registers.AF.as_pair.0);
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 160] = [
+pub static INSTRUCTIONS: [GenericInstruction; 176] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
@@ -952,7 +1016,6 @@ pub static INSTRUCTIONS: [GenericInstruction; 160] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x8D, disassembly: "ADC A, L"    , byte_size: 1, clock_tick: 4 , function: adc_a_l }),
     GenericInstruction::VOID(  Instruction { opcode: 0x8E, disassembly: "ADC A, (HL)" , byte_size: 1, clock_tick: 8 , function: adc_a_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0x8F, disassembly: "ADC A, A"    , byte_size: 1, clock_tick: 4 , function: adc_a_a }),
-
     GenericInstruction::VOID(  Instruction { opcode: 0x90, disassembly: "SUB A, B"    , byte_size: 1, clock_tick: 4 , function: sub_a_b }),
     GenericInstruction::VOID(  Instruction { opcode: 0x91, disassembly: "SUB A, C"    , byte_size: 1, clock_tick: 4 , function: sub_a_c }),
     GenericInstruction::VOID(  Instruction { opcode: 0x92, disassembly: "SUB A, D"    , byte_size: 1, clock_tick: 4 , function: sub_a_d }),
@@ -969,6 +1032,22 @@ pub static INSTRUCTIONS: [GenericInstruction; 160] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x9D, disassembly: "SBC A, L"    , byte_size: 1, clock_tick: 4 , function: sbc_a_l }),
     GenericInstruction::VOID(  Instruction { opcode: 0x9E, disassembly: "SBC A, (HL)" , byte_size: 1, clock_tick: 8 , function: sbc_a_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0x9F, disassembly: "SBC A, A"    , byte_size: 1, clock_tick: 4 , function: sbc_a_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA0, disassembly: "AND A, B"    , byte_size: 1, clock_tick: 4 , function: and_a_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA1, disassembly: "AND A, C"    , byte_size: 1, clock_tick: 4 , function: and_a_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA2, disassembly: "AND A, D"    , byte_size: 1, clock_tick: 4 , function: and_a_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA3, disassembly: "AND A, E"    , byte_size: 1, clock_tick: 4 , function: and_a_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA4, disassembly: "AND A, H"    , byte_size: 1, clock_tick: 4 , function: and_a_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA5, disassembly: "AND A, L"    , byte_size: 1, clock_tick: 4 , function: and_a_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA6, disassembly: "AND A, (HL)" , byte_size: 1, clock_tick: 8 , function: and_a_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA7, disassembly: "AND A, A"    , byte_size: 1, clock_tick: 4 , function: and_a_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA8, disassembly: "XOR A, B"    , byte_size: 1, clock_tick: 4 , function: xor_a_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xA9, disassembly: "XOR A, C"    , byte_size: 1, clock_tick: 4 , function: xor_a_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAA, disassembly: "XOR A, D"    , byte_size: 1, clock_tick: 4 , function: xor_a_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAB, disassembly: "XOR A, E"    , byte_size: 1, clock_tick: 4 , function: xor_a_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAC, disassembly: "XOR A, H"    , byte_size: 1, clock_tick: 4 , function: xor_a_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAD, disassembly: "XOR A, L"    , byte_size: 1, clock_tick: 4 , function: xor_a_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAE, disassembly: "XOR A, (HL)" , byte_size: 1, clock_tick: 8 , function: xor_a_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xAF, disassembly: "XOR A, A"    , byte_size: 1, clock_tick: 4 , function: xor_a_a }),
 ];
 
 // TODO: add tests
