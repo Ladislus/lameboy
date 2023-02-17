@@ -1,3 +1,5 @@
+use sdl2::libc::CTRL_CMD_DELFAMILY;
+
 use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
 use crate::cpu::template::{template_add_hl, template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld};
@@ -382,6 +384,28 @@ pub fn ld_a_hld_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
     memory.registers.set_a(read_value);
 }
 
+pub fn dec_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_dec_wide!(memory.registers.SP);
+}
+
+pub fn inc_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_inc_value!(memory, memory.registers.AF.as_pair.0);
+}
+
+pub fn dec_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_dec_value!(memory, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+    template_ld!(memory.registers.AF.as_pair.0, value);
+}
+
+pub fn ccf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.registers.set_subtraction_flag(false);
+    memory.registers.set_half_carry_flag(false);
+    memory.registers.set_carry_flag(!memory.registers.get_carry_flag());
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
 pub static INSTRUCTIONS: [GenericInstruction; 64] = [
     GenericInstruction::VOID(Instruction { opcode: 0x00, disassembly: "NOP", byte_size: 1, operands_count: 0, clock_tick: 4, function: noop }),
@@ -442,12 +466,12 @@ pub static INSTRUCTIONS: [GenericInstruction; 64] = [
     GenericInstruction::VOID(Instruction { opcode: 0x37, disassembly: "SCF", byte_size: 1, operands_count: 0, clock_tick: 4, function: scf }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x38, disassembly: "JR C, r8", byte_size: 2, operands_count: 0, clock_tick: 8, function: jr_c_r8 }),
     GenericInstruction::VOID(Instruction { opcode: 0x39, disassembly: "ADD HL, SP", byte_size: 1, operands_count: 0, clock_tick: 8, function: add_hl_sp }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3A, disassembly: "LD A, (HL-)", byte_size: 2, operands_count: 0, clock_tick: 8, function: ld_a_hld_addr }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3B, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3C, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3D, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3E, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
-    GenericInstruction::VOID(Instruction { opcode: 0x3F, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3A, disassembly: "LD A, (HL-)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_a_hld_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3B, disassembly: "DEC SP", byte_size: 1, operands_count: 0, clock_tick: 8, function: dec_sp }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3C, disassembly: "INC A", byte_size: 1, operands_count: 0, clock_tick: 4, function: inc_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3D, disassembly: "DEC A", byte_size: 1, operands_count: 0, clock_tick: 4, function: dec_a }),
+    GenericInstruction::DATA8(Instruction { opcode: 0x3E, disassembly: "LD A, d8", byte_size: 2, operands_count: 1, clock_tick: 8, function: ld_a_d8 }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3F, disassembly: "CCF", byte_size: 1, operands_count: 0, clock_tick: 4, function: ccf }),
 ];
 
 // TODO: add tests
