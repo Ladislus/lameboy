@@ -63,8 +63,8 @@ macro_rules! template_add_a {
 
             $memory.registers.set_zero_flag(result == 0);
             $memory.registers.set_subtraction_flag(false);
-            // H => Set if overflow from bit 11.
-            $memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, value));
+            // H => Set if overflow from bit 3.
+            $memory.registers.set_half_carry_flag(check_half_carry_add(old_value, value));
             // C => Set if overflow from bit 15.
             $memory.registers.set_carry_flag(has_overflown);
         }
