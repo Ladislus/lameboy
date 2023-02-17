@@ -334,11 +334,56 @@ pub fn inc_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 pub fn inc_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     let hl_value = memory.registers.get_hl();
     let read_value = memory.read_far_addr(hl_value);
-    memory.write_far_addr(hl_value, read_value + 1);
+    let new_value = read_value + 1;
+    memory.write_far_addr(hl_value, new_value);
+
+    memory.registers.set_zero_flag(new_value == 0);
+    memory.registers.set_subtraction_flag(false);
+    memory.registers.set_half_carry_flag(check_half_carry_add(read_value, 1));
+}
+
+pub fn dec_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    let hl_value = memory.registers.get_hl();
+    let read_value = memory.read_far_addr(hl_value);
+    let new_value = read_value - 1;
+    memory.write_far_addr(hl_value, new_value);
+
+    memory.registers.set_zero_flag(new_value == 0);
+    memory.registers.set_subtraction_flag(true);
+    memory.registers.set_half_carry_flag(check_half_carry_sub(read_value, 1));
+}
+
+pub fn ld_hl_addr_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+    memory.write_far_addr(memory.registers.get_hl(), value);
+}
+
+pub fn scf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.registers.set_subtraction_flag(false);
+    memory.registers.set_half_carry_flag(false);
+    memory.registers.set_carry_flag(true);
+}
+
+pub fn jr_c_r8(_instr: &OffsetInstruction, memory: &mut Memory, value: AddressOffset) {
+    if memory.registers.get_carry_flag() {
+        // To do "safe" signed + unsigned operation, do a wrapping add with both operands interpreted as unsigned
+        memory.registers.PC = memory.registers.PC.wrapping_add(value as FarAddress);
+    }
+}
+
+pub fn add_hl_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_add_hl!(memory, memory.registers.SP);
+}
+
+pub fn ld_a_hld_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    let hl_value = memory.registers.get_hl();
+    let read_value = memory.read_far_addr(hl_value);
+
+    memory.registers.set_hl(hl_value - 1);
+    memory.registers.set_a(read_value);
 }
 
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 53] = [
+pub static INSTRUCTIONS: [GenericInstruction; 64] = [
     GenericInstruction::VOID(Instruction { opcode: 0x00, disassembly: "NOP", byte_size: 1, operands_count: 0, clock_tick: 4, function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(Instruction { opcode: 0x02, disassembly: "LD (BC), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_bc_addr_a }),
@@ -391,7 +436,18 @@ pub static INSTRUCTIONS: [GenericInstruction; 53] = [
     GenericInstruction::DATA16(Instruction { opcode: 0x31, disassembly: "LD SP, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_sp_d16 }),
     GenericInstruction::VOID(Instruction { opcode: 0x32, disassembly: "LD (HL-), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hld_addr_a }),
     GenericInstruction::VOID(Instruction { opcode: 0x33, disassembly: "INC SP", byte_size: 1, operands_count: 0, clock_tick: 8, function: inc_sp }),
-    GenericInstruction::VOID(Instruction { opcode: 0x34, disassembly: "INC (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: inc_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x34, disassembly: "INC (HL)", byte_size: 1, operands_count: 0, clock_tick: 12, function: inc_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x35, disassembly: "DEC (HL)", byte_size: 1, operands_count: 0, clock_tick: 12, function: dec_hl_addr }),
+    GenericInstruction::DATA8(Instruction { opcode: 0x36, disassembly: "LD (HL), d8", byte_size: 2, operands_count: 1, clock_tick: 12, function: ld_hl_addr_d8 }),
+    GenericInstruction::VOID(Instruction { opcode: 0x37, disassembly: "SCF", byte_size: 1, operands_count: 0, clock_tick: 4, function: scf }),
+    GenericInstruction::OFFSET(Instruction { opcode: 0x38, disassembly: "JR C, r8", byte_size: 2, operands_count: 0, clock_tick: 8, function: jr_c_r8 }),
+    GenericInstruction::VOID(Instruction { opcode: 0x39, disassembly: "ADD HL, SP", byte_size: 1, operands_count: 0, clock_tick: 8, function: add_hl_sp }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3A, disassembly: "LD A, (HL-)", byte_size: 2, operands_count: 0, clock_tick: 8, function: ld_a_hld_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3B, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3C, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3D, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3E, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
+    GenericInstruction::VOID(Instruction { opcode: 0x3F, disassembly: "??", byte_size: 2, operands_count: 0, clock_tick: 8, function: unimplemented }),
 ];
 
 // TODO: add tests
