@@ -10,8 +10,6 @@ type MemoryPtr = Box<[Byte]>;
 pub struct Memory {
     pub size: usize,
     pub memory: MemoryPtr,
-    pub mask: MemoryPtr,
-    pub corrupted: bool,
     pub registers: RegisterGroup,
 }
 
@@ -23,8 +21,6 @@ impl Memory {
         Memory {
             size,
             memory: vec![0; size].into_boxed_slice(),
-            mask: vec![0; size].into_boxed_slice(),
-            corrupted: false,
             registers: RegisterGroup::new()
         }
     }
