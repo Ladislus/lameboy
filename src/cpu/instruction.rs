@@ -19,7 +19,6 @@ pub struct Instruction<T> {
     pub opcode: OpCode,
     pub disassembly: &'static str,
     pub byte_size: usize,
-    pub operands_count: usize,
     pub clock_tick: u8,
     pub function: InstructionFn<T>,
 }
@@ -46,7 +45,6 @@ impl<T> std::fmt::Debug for Instruction<T> {
             .field("OP Code", &format_args!("{:#04X}", self.opcode))
             .field("ASM Name", &self.disassembly)
             .field("Byte size", &self.byte_size)
-            .field("Number of operands", &self.operands_count)
             .field("CPU Clock ticks", &self.clock_tick)
             .finish_non_exhaustive()
     }
