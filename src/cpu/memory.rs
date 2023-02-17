@@ -6,10 +6,12 @@ use crate::utils::types::{Byte, FarAddress, NearAddress, Value, WideValue};
 const NEAR_ADDR_START: usize = 0xFF00;
 
 type MemoryPtr = Box<[Byte]>;
+type Stack = Vec<WideValue>;
 
 pub struct Memory {
     pub size: usize,
     pub memory: MemoryPtr,
+    pub stack: Stack,
     pub registers: RegisterGroup,
 }
 
@@ -21,6 +23,7 @@ impl Memory {
         Memory {
             size,
             memory: vec![0; size].into_boxed_slice(),
+            stack: Stack::new(),
             registers: RegisterGroup::new()
         }
     }

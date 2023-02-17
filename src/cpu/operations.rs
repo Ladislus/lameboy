@@ -934,8 +934,16 @@ pub fn cp_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.AF.as_pair.0);
 }
 
+pub fn ret_nz(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    if !memory.registers.get_zero_flag() {
+        // TODO: Check
+        debug_assert!(memory.stack.len() > 0);
+        memory.registers.SP = memory.stack.pop().unwrap();
+    }
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 192] = [
+pub static INSTRUCTIONS: [GenericInstruction; 193] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
@@ -1128,6 +1136,7 @@ pub static INSTRUCTIONS: [GenericInstruction; 192] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xBD, disassembly: "CP A, L"     , byte_size: 1, clock_tick: 4 , function: cp_a_l }),
     GenericInstruction::VOID(  Instruction { opcode: 0xBE, disassembly: "CP A, (HL)"  , byte_size: 1, clock_tick: 8 , function: cp_a_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0xBF, disassembly: "CP A, A"     , byte_size: 1, clock_tick: 4 , function: cp_a_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC0, disassembly: "RET NZ"      , byte_size: 1, clock_tick: 8 , function: ret_nz }),
 ];
 
 // TODO: add tests
