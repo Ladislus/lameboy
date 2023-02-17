@@ -83,7 +83,7 @@ macro_rules! template_sub_a {
 
             $memory.registers.set_zero_flag(result == 0);
             $memory.registers.set_subtraction_flag(true);
-            // H => Set if overflow from bit 3.
+            // H => Set if borrow from bit 4.
             $memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, value));
             // C => Set if overflow from bit 15.
             $memory.registers.set_carry_flag(has_overflown);
@@ -103,7 +103,7 @@ macro_rules! template_and_a {
 
             $memory.registers.set_zero_flag(result == 0);
             $memory.registers.set_subtraction_flag(false);
-            $memory.registers.set_half_carry_flag(false);
+            $memory.registers.set_half_carry_flag(true);
             $memory.registers.set_carry_flag(false);
         }
     };
@@ -121,8 +121,46 @@ macro_rules! template_xor_a {
 
             $memory.registers.set_zero_flag(result == 0);
             $memory.registers.set_subtraction_flag(false);
+            $memory.registers.set_half_carry_flag(false);
+            $memory.registers.set_carry_flag(false);
+        }
+    };
+}
+
+macro_rules! template_or_a {
+    ($memory: expr, $field: expr) => {
+        unsafe {
+            let old_value = $memory.registers.get_a();
+            let value = $field;
+
+            let result = old_value | value;
+
+            $memory.registers.set_a(result);
+
+            $memory.registers.set_zero_flag(result == 0);
+            $memory.registers.set_subtraction_flag(false);
             $memory.registers.set_half_carry_flag(true);
             $memory.registers.set_carry_flag(false);
+        }
+    };
+}
+
+macro_rules! template_cp_a {
+    ($memory: expr, $field: expr) => {
+        unsafe {
+            let old_value = $memory.registers.get_a();
+            let value = $field;
+
+            let (result, has_overflown) = old_value.overflowing_sub(value);
+
+            // $memory.registers.set_a(result);
+
+            $memory.registers.set_zero_flag(result == 0);
+            $memory.registers.set_subtraction_flag(true);
+            // H => Set if borrow from bit 4.
+            $memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, value));
+            // C => Set if overflow from bit 15.
+            $memory.registers.set_carry_flag(has_overflown);
         }
     };
 }
@@ -148,4 +186,4 @@ macro_rules! template_add_hl {
 
 // Trick to export macro to current crate, without using "macro_export"
 #[allow(unused_imports)]
-pub(super) use {template_inc_wide, template_dec_wide, template_inc_value, template_dec_value, template_ld, template_add_hl, template_add_a, template_sub_a, template_and_a, template_xor_a};
+pub(super) use {template_inc_wide, template_dec_wide, template_inc_value, template_dec_value, template_ld, template_add_hl, template_add_a, template_sub_a, template_and_a, template_xor_a, template_or_a, template_cp_a};
