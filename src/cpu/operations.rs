@@ -406,8 +406,279 @@ pub fn ccf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     memory.registers.set_carry_flag(!memory.registers.get_carry_flag());
 }
 
+pub fn ld_b_b(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.BC.as_pair.0, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_b_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_b_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_b_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_b_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_b_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_b_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_b_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.0, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_c_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_c_c(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.BC.as_pair.1, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_c_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_c_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_c_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_c_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_c_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_c_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.BC.as_pair.1, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_d_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_d_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_d_d(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.DE.as_pair.0, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_d_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_d_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_d_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_d_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_d_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.0, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_e_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_e_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_e_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_e_e(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.DE.as_pair.1, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_e_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_e_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_e_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_e_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.DE.as_pair.1, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_h_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_h_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_h_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_h_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_h_h(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.HL.as_pair.0, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_h_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_h_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_h_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.0, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_l_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_l_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_l_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_l_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_l_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_l_l(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.HL.as_pair.1, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_l_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_l_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.HL.as_pair.1, memory.registers.AF.as_pair.0);
+}
+
+pub fn ld_hl_addr_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_b());
+}
+
+pub fn ld_hl_addr_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_c());
+}
+
+pub fn ld_hl_addr_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_d());
+}
+
+pub fn ld_hl_addr_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_e());
+}
+
+pub fn ld_hl_addr_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_h());
+}
+
+pub fn ld_hl_addr_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_l());
+}
+
+pub fn halt(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    todo!("Implement halt")
+}
+
+pub fn ld_hl_addr_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.write_far_addr(memory.registers.get_hl(), memory.registers.get_a());
+}
+
+pub fn ld_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.0);
+}
+
+pub fn ld_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.1);
+}
+
+pub fn ld_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.0);
+}
+
+pub fn ld_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.1);
+}
+
+pub fn ld_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.0);
+}
+
+pub fn ld_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.1);
+}
+
+pub fn ld_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_a_a(_instr: &VoidInstruction, _memory: &mut Memory, _value: Void) {
+    // Equivalent to a NOP
+    // https://retrocomputing.stackexchange.com/questions/19632/what-could-be-the-reason-an-ld-b-b-instruction-was-used-in-this-busy-loop
+    // template_ld!(memory.registers.AF.as_pair.0, memory.registers.AF.as_pair.0);
+}
+
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 64] = [
+pub static INSTRUCTIONS: [GenericInstruction; 128] = [
     GenericInstruction::VOID(Instruction { opcode: 0x00, disassembly: "NOP", byte_size: 1, operands_count: 0, clock_tick: 4, function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16", byte_size: 3, operands_count: 1, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(Instruction { opcode: 0x02, disassembly: "LD (BC), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_bc_addr_a }),
@@ -472,6 +743,70 @@ pub static INSTRUCTIONS: [GenericInstruction; 64] = [
     GenericInstruction::VOID(Instruction { opcode: 0x3D, disassembly: "DEC A", byte_size: 1, operands_count: 0, clock_tick: 4, function: dec_a }),
     GenericInstruction::DATA8(Instruction { opcode: 0x3E, disassembly: "LD A, d8", byte_size: 2, operands_count: 1, clock_tick: 8, function: ld_a_d8 }),
     GenericInstruction::VOID(Instruction { opcode: 0x3F, disassembly: "CCF", byte_size: 1, operands_count: 0, clock_tick: 4, function: ccf }),
+    GenericInstruction::VOID(Instruction { opcode: 0x40, disassembly: "LD B, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x41, disassembly: "LD B, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x42, disassembly: "LD B, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x43, disassembly: "LD B, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x44, disassembly: "LD B, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x45, disassembly: "LD B, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x46, disassembly: "LD B, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_b_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x47, disassembly: "LD B, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_b_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x48, disassembly: "LD C, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x49, disassembly: "LD C, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4A, disassembly: "LD C, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4B, disassembly: "LD C, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4C, disassembly: "LD C, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4D, disassembly: "LD C, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4E, disassembly: "LD C, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_c_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x4F, disassembly: "LD C, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_c_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x50, disassembly: "LD D, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x51, disassembly: "LD D, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x52, disassembly: "LD D, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x53, disassembly: "LD D, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x54, disassembly: "LD D, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x55, disassembly: "LD D, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x56, disassembly: "LD D, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_d_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x57, disassembly: "LD D, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_d_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x58, disassembly: "LD E, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x59, disassembly: "LD E, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5A, disassembly: "LD E, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5B, disassembly: "LD E, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5C, disassembly: "LD E, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5D, disassembly: "LD E, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5E, disassembly: "LD E, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_e_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x5F, disassembly: "LD E, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_e_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x60, disassembly: "LD H, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x61, disassembly: "LD H, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x62, disassembly: "LD H, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x63, disassembly: "LD H, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x64, disassembly: "LD H, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x65, disassembly: "LD H, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x66, disassembly: "LD H, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_h_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x67, disassembly: "LD H, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_h_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x68, disassembly: "LD L, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x69, disassembly: "LD L, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6A, disassembly: "LD L, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6B, disassembly: "LD L, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6C, disassembly: "LD L, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6D, disassembly: "LD L, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6E, disassembly: "LD L, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_l_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x6F, disassembly: "LD L, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_l_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x70, disassembly: "LD (HL), B", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x71, disassembly: "LD (HL), C", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x72, disassembly: "LD (HL), D", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x73, disassembly: "LD (HL), E", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x74, disassembly: "LD (HL), H", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x75, disassembly: "LD (HL), L", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x76, disassembly: "HALT", byte_size: 1, operands_count: 0, clock_tick: 4, function: halt }),
+    GenericInstruction::VOID(Instruction { opcode: 0x77, disassembly: "LD (HL), A", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_hl_addr_a }),
+    GenericInstruction::VOID(Instruction { opcode: 0x78, disassembly: "LD A, B", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_b }),
+    GenericInstruction::VOID(Instruction { opcode: 0x79, disassembly: "LD A, C", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_c }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7A, disassembly: "LD A, D", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_d }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7B, disassembly: "LD A, E", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_e }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7C, disassembly: "LD A, H", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_h }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7D, disassembly: "LD A, L", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_l }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7E, disassembly: "LD A, (HL)", byte_size: 1, operands_count: 0, clock_tick: 8, function: ld_a_hl_addr }),
+    GenericInstruction::VOID(Instruction { opcode: 0x7F, disassembly: "LD A, A", byte_size: 1, operands_count: 0, clock_tick: 4, function: ld_a_a }),
 ];
 
 // TODO: add tests

@@ -46,6 +46,9 @@ macro_rules! template_ld {
     ($field: expr, $value: ident) => {
         $field = $value;
     };
+    ($field: expr, $value: expr) => {
+        unsafe { $field = $value; }
+    };
 }
 
 macro_rules! template_add_a {
