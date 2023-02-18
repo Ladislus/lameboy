@@ -980,8 +980,50 @@ pub fn rst_00h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     memory.registers.PC = 0;
 }
 
+// TODO: Check
+pub fn ret_z(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    if memory.registers.get_zero_flag() {
+        debug_assert!(memory.stack.len() > 0);
+        memory.registers.PC = memory.stack_pop_wide();
+    }
+}
+
+// TODO: Check
+pub fn ret(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    debug_assert!(memory.stack.len() > 0);
+    memory.registers.PC = memory.stack_pop_wide();
+}
+
+pub fn jp_z_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    if memory.registers.get_zero_flag() {
+        memory.registers.PC = value;
+    }
+}
+
+pub fn call_z_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    if memory.registers.get_zero_flag() {
+        memory.stack_push_wide(memory.registers.PC);
+        memory.registers.PC = value;
+    }
+}
+
+pub fn call_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    memory.stack_push_wide(memory.registers.PC);
+    memory.registers.PC = value;
+}
+
+pub fn adc_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+    template_add_a!(memory, value + (memory.registers.get_carry_flag() as Value));
+}
+
+// TODO: Check
+pub fn rst_08h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.stack_push_wide(memory.registers.PC);
+    memory.registers.PC = 0x08;
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 200] = [
+pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
@@ -1182,6 +1224,17 @@ pub static INSTRUCTIONS: [GenericInstruction; 200] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xC5, disassembly: "PUSH BC"     , byte_size: 1, clock_tick: 16, function: push_bc }),
     GenericInstruction::DATA8( Instruction { opcode: 0xC6, disassembly: "ADD A, d8"   , byte_size: 2, clock_tick: 8 , function: add_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC7, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_00h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC8, disassembly: "RET Z"       , byte_size: 1, clock_tick: 8 , function: ret_z }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC9, disassembly: "RET"         , byte_size: 1, clock_tick: 16, function: ret }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xCA, disassembly: "JP Z, a16"   , byte_size: 3, clock_tick: 12, function: jp_z_a16 }),
+    // TODO: $CB is the prefix for wide operations, so find a way to manage this
+    // I will probably just check before executing an ops to check if it was the prefix, so the instruction dosen't need any function   
+    GenericInstruction::VOID(  Instruction { opcode: 0xCB, disassembly: "PREFIX"      , byte_size: 1, clock_tick: 4 , function: unimplemented }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xCC, disassembly: "CALL Z, a16" , byte_size: 3, clock_tick: 12, function: call_z_a16 }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xCD, disassembly: "CALL a16"    , byte_size: 3, clock_tick: 24, function: call_a16 }),
+    GenericInstruction::DATA8( Instruction { opcode: 0xCE, disassembly: "ADC A, d8"   , byte_size: 2, clock_tick: 8 , function: adc_a_d8 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xCF, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_08h }),
+
 ];
 
 // TODO: add tests
