@@ -934,16 +934,54 @@ pub fn cp_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.AF.as_pair.0);
 }
 
+// TODO: Check
 pub fn ret_nz(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     if !memory.registers.get_zero_flag() {
-        // TODO: Check
         debug_assert!(memory.stack.len() > 0);
-        memory.registers.PC = memory.stack.pop().unwrap();
+        memory.registers.PC = memory.stack_pop_wide();
     }
 }
 
+// TODO: Check
+pub fn pop_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    let value = memory.stack_pop_wide();
+    memory.registers.set_bc(value);
+}
+
+pub fn jp_nz_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    if !memory.registers.get_zero_flag() {
+        memory.registers.PC = value;
+    }
+}
+
+pub fn jp_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    memory.registers.PC = value;
+}
+
+pub fn call_nz_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
+    if !memory.registers.get_zero_flag() {
+        memory.stack_push_wide(memory.registers.PC);
+        memory.registers.PC = value;
+    }
+}
+
+// TODO: Check
+pub fn push_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.stack_push_wide(memory.registers.get_bc());
+}
+
+pub fn add_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+    template_add_a!(memory, value);
+}
+
+// TODO: Check
+pub fn rst_00h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+    memory.stack_push_wide(memory.registers.PC);
+    memory.registers.PC = 0;
+}
+
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 193] = [
+pub static INSTRUCTIONS: [GenericInstruction; 200] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
@@ -1137,6 +1175,13 @@ pub static INSTRUCTIONS: [GenericInstruction; 193] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xBE, disassembly: "CP A, (HL)"  , byte_size: 1, clock_tick: 8 , function: cp_a_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0xBF, disassembly: "CP A, A"     , byte_size: 1, clock_tick: 4 , function: cp_a_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC0, disassembly: "RET NZ"      , byte_size: 1, clock_tick: 8 , function: ret_nz }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC1, disassembly: "POP BC"      , byte_size: 1, clock_tick: 12, function: pop_bc }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xC2, disassembly: "JP NZ, a16"  , byte_size: 3, clock_tick: 12, function: jp_nz_a16 }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xC3, disassembly: "JP a16"      , byte_size: 3, clock_tick: 16, function: jp_a16 }),
+    GenericInstruction::ADDR16(Instruction { opcode: 0xC4, disassembly: "CALL NZ, a16", byte_size: 3, clock_tick: 12, function: call_nz_a16 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC5, disassembly: "PUSH BC"     , byte_size: 1, clock_tick: 16, function: push_bc }),
+    GenericInstruction::DATA8( Instruction { opcode: 0xC6, disassembly: "ADD A, d8"   , byte_size: 2, clock_tick: 8 , function: add_a_d8 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xC7, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_00h }),
 ];
 
 // TODO: add tests
