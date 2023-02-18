@@ -40,8 +40,8 @@ impl Memory {
 
         let splitted = wide_to_pair(value);
 
-        self.stack[self.registers.SP - 1] = splitted.0;
-        self.stack[self.registers.SP - 2] = splitted.1;
+        self.stack[(self.registers.SP - 1) as usize] = splitted.0;
+        self.stack[(self.registers.SP - 2) as usize] = splitted.1;
 
         // Comes from:
         // http://gameboy.mongenel.com/dmg/opcodes.html
@@ -51,8 +51,8 @@ impl Memory {
 
     // TODO: manage stack size
     pub fn stack_pop_wide(&mut self) -> WideValue {
-        let low: WideValue = self.stack[self.registers.SP];
-        let high: WideValue = self.stack[self.registers.SP + 1];
+        let low = self.stack[self.registers.SP as usize] as WideValue;
+        let high = self.stack[(self.registers.SP + 1) as usize] as WideValue;
         let value = (high << (bit_size(high) / 2)) + low;
 
         // Comes from:
