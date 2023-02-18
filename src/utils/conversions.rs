@@ -1,8 +1,8 @@
 use crate::utils::types::{PairRegister, Value, WideRegister, WideValue};
 
 // TODO: Check endianness
-pub fn pair_to_wide(pair: &PairRegister) -> WideRegister {
-    return ((pair.0 as WideValue) << 8) + (pair.1 as WideValue);
+pub fn pair_to_wide(high: Value, low: Value) -> WideRegister {
+    return ((high as WideValue) << 8) + (low as WideValue);
 }
 
 // TODO: Check endianness
@@ -24,10 +24,10 @@ mod tests {
 
     #[test]
     fn test_simple_to_wide() {
-        assert_eq!(pair_to_wide(&(0b1111_1111, 0b1111_1111)), 0b1111_1111_1111_1111);
-        assert_eq!(pair_to_wide(&(0b0000_0000, 0b0000_0000)), 0b0000_0000_0000_0000);
-        assert_eq!(pair_to_wide(&(0b1111_0000, 0b0000_1111)), 0b1111_0000_0000_1111);
-        assert_eq!(pair_to_wide(&(0b1000_0000, 0b0000_0001)), 0b1000_0000_0000_0001);
-        assert_eq!(pair_to_wide(&(0b0000_0000, 0b0000_0001)), 0b0000_0000_0000_0001);
+        assert_eq!(pair_to_wide(0b1111_1111, 0b1111_1111), 0b1111_1111_1111_1111);
+        assert_eq!(pair_to_wide(0b0000_0000, 0b0000_0000), 0b0000_0000_0000_0000);
+        assert_eq!(pair_to_wide(0b1111_0000, 0b0000_1111), 0b1111_0000_0000_1111);
+        assert_eq!(pair_to_wide(0b1000_0000, 0b0000_0001), 0b1000_0000_0000_0001);
+        assert_eq!(pair_to_wide(0b0000_0000, 0b0000_0001), 0b0000_0000_0000_0001);
     }
 }

@@ -123,7 +123,7 @@ impl Memory {
     pub fn read_wide_near_addr(&self, addr: NearAddress) -> WideValue {
         let addr = Self::near_to_far(addr);
         debug_assert!((addr + 1) < self.size);
-        let read = pair_to_wide(&(self.memory[addr], self.memory[addr + 1]));
+        let read = pair_to_wide(self.memory[addr], self.memory[addr + 1]);
         log!("MEMORY", format!("Read {:#x} at address ${:#x}", read, addr));
         return read;
     }
@@ -132,7 +132,7 @@ impl Memory {
     pub fn read_wide_far_addr(&self, addr: FarAddress) -> WideValue {
         let addr = addr as usize;
         debug_assert!((addr + 1) < self.size);
-        let read = pair_to_wide(&(self.memory[addr], self.memory[addr + 1]));
+        let read = pair_to_wide(self.memory[addr], self.memory[addr + 1]);
         log!("MEMORY", format!("Read {:#x} at address ${:#x}", read, addr));
         return read;
     }
