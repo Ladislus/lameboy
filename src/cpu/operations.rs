@@ -1,5 +1,3 @@
-use sdl2::libc::CTRL_CMD_DELFAMILY;
-
 use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
 use crate::cpu::template::{template_add_a, template_add_hl, template_and_a, template_cp_a, template_dec_value, template_dec_wide, template_inc_value, template_inc_wide, template_ld, template_or_a, template_sub_a, template_xor_a};
@@ -937,14 +935,13 @@ pub fn cp_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 // TODO: Check
 pub fn ret_nz(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     if !memory.registers.get_zero_flag() {
-        debug_assert!(memory.stack.len() > 0);
-        memory.registers.PC = memory.stack_pop_wide();
+        memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
     }
 }
 
 // TODO: Check
 pub fn pop_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    let value = memory.stack_pop_wide();
+    let value = memory.stack.pop_wide(&mut memory.registers.SP);
     memory.registers.set_bc(value);
 }
 
@@ -960,14 +957,15 @@ pub fn jp_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAdd
 
 pub fn call_nz_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
     if !memory.registers.get_zero_flag() {
-        memory.stack_push_wide(memory.registers.PC);
+        memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
         memory.registers.PC = value;
     }
 }
 
 // TODO: Check
 pub fn push_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.stack_push_wide(memory.registers.get_bc());
+    let bc_value = memory.registers.get_bc();
+    memory.stack.push_wide(&mut memory.registers.SP, bc_value);
 }
 
 pub fn add_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
@@ -976,22 +974,20 @@ pub fn add_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
 
 // TODO: Check
 pub fn rst_00h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.stack_push_wide(memory.registers.PC);
+    memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
     memory.registers.PC = 0;
 }
 
 // TODO: Check
 pub fn ret_z(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     if memory.registers.get_zero_flag() {
-        debug_assert!(memory.stack.len() > 0);
-        memory.registers.PC = memory.stack_pop_wide();
+        memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
     }
 }
 
 // TODO: Check
 pub fn ret(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    debug_assert!(memory.stack.len() > 0);
-    memory.registers.PC = memory.stack_pop_wide();
+    memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
 }
 
 pub fn jp_z_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
@@ -1002,13 +998,13 @@ pub fn jp_z_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarA
 
 pub fn call_z_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
     if memory.registers.get_zero_flag() {
-        memory.stack_push_wide(memory.registers.PC);
+        memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
         memory.registers.PC = value;
     }
 }
 
 pub fn call_a16(_instr: &FarAddressInstruction, memory: &mut Memory, value: FarAddress) {
-    memory.stack_push_wide(memory.registers.PC);
+    memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
     memory.registers.PC = value;
 }
 
@@ -1018,7 +1014,7 @@ pub fn adc_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
 
 // TODO: Check
 pub fn rst_08h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
-    memory.stack_push_wide(memory.registers.PC);
+    memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
     memory.registers.PC = 0x08;
 }
 
@@ -1228,13 +1224,12 @@ pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xC9, disassembly: "RET"         , byte_size: 1, clock_tick: 16, function: ret }),
     GenericInstruction::ADDR16(Instruction { opcode: 0xCA, disassembly: "JP Z, a16"   , byte_size: 3, clock_tick: 12, function: jp_z_a16 }),
     // TODO: $CB is the prefix for wide operations, so find a way to manage this
-    // I will probably just check before executing an ops to check if it was the prefix, so the instruction dosen't need any function   
+    // I will probably just check before executing an ops to check if it was the prefix, so the instruction doesn't need any function
     GenericInstruction::VOID(  Instruction { opcode: 0xCB, disassembly: "PREFIX"      , byte_size: 1, clock_tick: 4 , function: unimplemented }),
     GenericInstruction::ADDR16(Instruction { opcode: 0xCC, disassembly: "CALL Z, a16" , byte_size: 3, clock_tick: 12, function: call_z_a16 }),
     GenericInstruction::ADDR16(Instruction { opcode: 0xCD, disassembly: "CALL a16"    , byte_size: 3, clock_tick: 24, function: call_a16 }),
     GenericInstruction::DATA8( Instruction { opcode: 0xCE, disassembly: "ADC A, d8"   , byte_size: 2, clock_tick: 8 , function: adc_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xCF, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_08h }),
-
 ];
 
 // TODO: add tests
