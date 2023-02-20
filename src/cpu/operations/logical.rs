@@ -1,4 +1,3 @@
-use crate::cpu::instruction::VoidInstruction;
 use crate::cpu::memory::Memory;
 use crate::utils::bits::{assign_bit, get_bit, max_bit_index, bit_size, check_half_carry_sub};
 use crate::utils::log::log;
@@ -86,7 +85,7 @@ macro_rules! template_cp_a {
 //  #           Rotate          #
 //  #############################
 
-pub fn rla(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn rla(memory: &mut Memory, _value: Void) {
     let old_value = memory.registers.get_a();
     let old_carry = memory.registers.get_carry_flag();
     let popped_value = get_bit(old_value, max_bit_index(old_value));
@@ -101,7 +100,7 @@ pub fn rla(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     memory.registers.set_carry_flag(popped_value);
 }
 
-pub fn rlca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn rlca(memory: &mut Memory, _value: Void) {
     /*
         RLCA is "Rotate left circular register A"
 
@@ -124,7 +123,7 @@ pub fn rlca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     memory.registers.set_carry_flag(popped_value);
 }
 
-pub fn rra(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn rra(memory: &mut Memory, _value: Void) {
     let old_value = memory.registers.get_a();
     let old_carry = memory.registers.get_carry_flag();
     let popped_value = get_bit(old_value, 0);
@@ -140,7 +139,7 @@ pub fn rra(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
     memory.registers.set_carry_flag(popped_value);
 }
 
-pub fn rrca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn rrca(memory: &mut Memory, _value: Void) {
     /*
         RLCA is "Rotate right circular register A"
 
@@ -167,35 +166,35 @@ pub fn rrca(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 //  #          Bit And          #
 //  #############################
 
-pub fn and_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_a(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn and_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_b(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn and_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_c(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn and_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_d(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn and_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_e(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn and_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_h(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn and_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_l(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn and_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn and_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }
 
@@ -203,35 +202,35 @@ pub fn and_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
 //  #          Bit Or           #
 //  #############################
 
-pub fn or_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_a(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn or_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_b(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn or_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_c(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn or_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_d(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn or_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_e(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn or_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_h(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn or_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_l(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn or_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn or_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }
 
@@ -239,35 +238,35 @@ pub fn or_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void)
 //  #          Bit Xor          #
 //  #############################
 
-pub fn xor_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_a(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn xor_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_b(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn xor_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_c(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn xor_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_d(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn xor_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_e(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn xor_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_h(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn xor_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_l(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn xor_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn xor_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }
 
@@ -275,34 +274,34 @@ pub fn xor_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
 //  #        Comparison         #
 //  #############################
 
-pub fn cp_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_a(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn cp_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_b(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn cp_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_c(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn cp_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_d(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn cp_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_e(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn cp_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_h(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn cp_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_l(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn cp_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cp_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }

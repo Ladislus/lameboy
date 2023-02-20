@@ -21,9 +21,9 @@ fn main() {
 
     match instruction_from_opcode(0x27) {
         GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
-        GenericInstruction::DATA16(instr) => instr.execute(&mut memory, 1),
-        GenericInstruction::DATA8(instr) => instr.execute(&mut memory, 1),
-        GenericInstruction::ADDR16(instr) => instr.execute(&mut memory, 100),
+        GenericInstruction::WIDE(instr) => instr.execute(&mut memory, 1),
+        GenericInstruction::VALUE(instr) => instr.execute(&mut memory, 1),
+        GenericInstruction::FAR(instr) => instr.execute(&mut memory, 100),
         instr @ _ => unimplemented!("GenericInstruction {:?} not implemented", instr)
     }
 

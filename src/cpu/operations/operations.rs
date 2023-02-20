@@ -1,44 +1,35 @@
-use crate::cpu::instruction::{GenericInstruction, Instruction, WideValueInstruction, ValueInstruction, FarAddressInstruction, OffsetInstruction, VoidInstruction};
-use crate::cpu::memory::Memory;
+use crate::cpu::instruction::{GenericInstruction, Instruction};
 use crate::cpu::operations::load::*;
 use crate::cpu::operations::jumps::*;
 use crate::cpu::operations::logical::*;
 use crate::cpu::operations::misc::*;
-use crate::cpu::operations::bits::*;
 use crate::cpu::operations::arithmetic::*;
-use crate::utils::bits::{assign_bit, bit_size, check_half_carry_add, check_half_carry_sub, check_half_carry_wide_add, get_bit, max_bit_index};
-use crate::utils::log::log;
-use crate::utils::types::{FarAddress, AddressOffset, Value, Void, WideValue};
-
-pub fn unimplemented<T>(instr: &Instruction<T>, _memory: &mut Memory, _value: T) {
-    unimplemented!("Function for {:?} is not implemented", instr);
-}
 
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
 pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
-    GenericInstruction::DATA16(Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
+    GenericInstruction::WIDE(  Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0x03, disassembly: "INC BC"      , byte_size: 1, clock_tick: 8 , function: inc_bc }),
     GenericInstruction::VOID(  Instruction { opcode: 0x04, disassembly: "INC B"       , byte_size: 1, clock_tick: 4 , function: inc_b }),
     GenericInstruction::VOID(  Instruction { opcode: 0x05, disassembly: "DEC B"       , byte_size: 1, clock_tick: 4 , function: dec_b }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x06, disassembly: "LD B, d8"    , byte_size: 2, clock_tick: 8 , function: ld_b_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x06, disassembly: "LD B, d8"    , byte_size: 2, clock_tick: 8 , function: ld_b_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x07, disassembly: "RLCA"        , byte_size: 1, clock_tick: 4 , function: rlca }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0x08, disassembly: "LD (a16), SP", byte_size: 3, clock_tick: 20, function: ld_a16_addr_sp }),
+    GenericInstruction::FAR(   Instruction { opcode: 0x08, disassembly: "LD (a16), SP", byte_size: 3, clock_tick: 20, function: ld_a16_addr_sp }),
     GenericInstruction::VOID(  Instruction { opcode: 0x09, disassembly: "AD HL, BC"   , byte_size: 1, clock_tick: 8 , function: add_hl_bc }),
     GenericInstruction::VOID(  Instruction { opcode: 0x0A, disassembly: "LD A, (BC)"  , byte_size: 1, clock_tick: 8 , function: ld_a_bc_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0x0B, disassembly: "DEC BC"      , byte_size: 1, clock_tick: 8 , function: dec_bc }),
     GenericInstruction::VOID(  Instruction { opcode: 0x0C, disassembly: "INC C"       , byte_size: 1, clock_tick: 4 , function: inc_c }),
     GenericInstruction::VOID(  Instruction { opcode: 0x0D, disassembly: "DEC C"       , byte_size: 1, clock_tick: 4 , function: dec_c }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x0E, disassembly: "LD C, d8"    , byte_size: 2, clock_tick: 8 , function: ld_c_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x0E, disassembly: "LD C, d8"    , byte_size: 2, clock_tick: 8 , function: ld_c_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x0F, disassembly: "RRCA"        , byte_size: 1, clock_tick: 4 , function: rrca }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x10, disassembly: "STOP d8"     , byte_size: 2, clock_tick: 4 , function: stop }),
-    GenericInstruction::DATA16(Instruction { opcode: 0x11, disassembly: "LD DE, d16"  , byte_size: 3, clock_tick: 12, function: ld_de_d16 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x10, disassembly: "STOP d8"     , byte_size: 2, clock_tick: 4 , function: stop }),
+    GenericInstruction::WIDE(  Instruction { opcode: 0x11, disassembly: "LD DE, d16"  , byte_size: 3, clock_tick: 12, function: ld_de_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x12, disassembly: "LD (DE), A"  , byte_size: 1, clock_tick: 8 , function: ld_de_addr_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0x13, disassembly: "INC DE"      , byte_size: 1, clock_tick: 8 , function: inc_de }),
     GenericInstruction::VOID(  Instruction { opcode: 0x14, disassembly: "INC D"       , byte_size: 1, clock_tick: 4 , function: inc_d }),
     GenericInstruction::VOID(  Instruction { opcode: 0x15, disassembly: "DEC D"       , byte_size: 1, clock_tick: 4 , function: dec_d }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x16, disassembly: "LD D, d8"    , byte_size: 2, clock_tick: 8 , function: ld_d_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x16, disassembly: "LD D, d8"    , byte_size: 2, clock_tick: 8 , function: ld_d_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x17, disassembly: "RLA"         , byte_size: 1, clock_tick: 4 , function: rla }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x18, disassembly: "JR r8"       , byte_size: 2, clock_tick: 12, function: jr_r8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x19, disassembly: "ADD HL, DE"  , byte_size: 1, clock_tick: 8 , function: add_hl_de }),
@@ -46,15 +37,15 @@ pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x1B, disassembly: "DEC DE"      , byte_size: 1, clock_tick: 8 , function: dec_de }),
     GenericInstruction::VOID(  Instruction { opcode: 0x1C, disassembly: "INC E"       , byte_size: 1, clock_tick: 4 , function: inc_e }),
     GenericInstruction::VOID(  Instruction { opcode: 0x1D, disassembly: "DEC E"       , byte_size: 1, clock_tick: 4 , function: dec_e }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x1E, disassembly: "LD E, d8"    , byte_size: 2, clock_tick: 8 , function: ld_e_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x1E, disassembly: "LD E, d8"    , byte_size: 2, clock_tick: 8 , function: ld_e_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x1F, disassembly: "RRA"         , byte_size: 1, clock_tick: 4 , function: rra }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x20, disassembly: "JR NZ, r8"   , byte_size: 1, clock_tick: 8 , function: jr_nz_r8 }),
-    GenericInstruction::DATA16(Instruction { opcode: 0x21, disassembly: "LD HL, d16"  , byte_size: 3, clock_tick: 12, function: ld_hl_d16 }),
+    GenericInstruction::WIDE(  Instruction { opcode: 0x21, disassembly: "LD HL, d16"  , byte_size: 3, clock_tick: 12, function: ld_hl_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x22, disassembly: "LD (HL+), A" , byte_size: 1, clock_tick: 8 , function: ld_hli_addr_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0x23, disassembly: "INC HL"      , byte_size: 1, clock_tick: 8 , function: inc_hl }),
     GenericInstruction::VOID(  Instruction { opcode: 0x24, disassembly: "INC H"       , byte_size: 1, clock_tick: 4 , function: inc_h }),
     GenericInstruction::VOID(  Instruction { opcode: 0x25, disassembly: "DEC H"       , byte_size: 1, clock_tick: 4 , function: dec_h }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x26, disassembly: "LD H, d8"    , byte_size: 2, clock_tick: 8 , function: ld_h_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x26, disassembly: "LD H, d8"    , byte_size: 2, clock_tick: 8 , function: ld_h_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x27, disassembly: "DAA"         , byte_size: 1, clock_tick: 4 , function: daa }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x28, disassembly: "JR Z, r8"    , byte_size: 2, clock_tick: 8 , function: jr_z_r8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x29, disassembly: "ADD HL, HL"  , byte_size: 1, clock_tick: 8 , function: add_hl_hl }),
@@ -62,15 +53,15 @@ pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x2B, disassembly: "DEC HL"      , byte_size: 1, clock_tick: 8 , function: dec_hl }),
     GenericInstruction::VOID(  Instruction { opcode: 0x2C, disassembly: "INC L"       , byte_size: 1, clock_tick: 4 , function: inc_l }),
     GenericInstruction::VOID(  Instruction { opcode: 0x2D, disassembly: "DEC L"       , byte_size: 1, clock_tick: 4 , function: dec_l }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x2E, disassembly: "LD L, d8"    , byte_size: 2, clock_tick: 8 , function: ld_l_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x2E, disassembly: "LD L, d8"    , byte_size: 2, clock_tick: 8 , function: ld_l_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x2F, disassembly: "CPL"         , byte_size: 1, clock_tick: 4 , function: cpl }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x30, disassembly: "JR NC, r8"   , byte_size: 2, clock_tick: 8 , function: jr_nc_r8 }),
-    GenericInstruction::DATA16(Instruction { opcode: 0x31, disassembly: "LD SP, d16"  , byte_size: 3, clock_tick: 12, function: ld_sp_d16 }),
+    GenericInstruction::WIDE(  Instruction { opcode: 0x31, disassembly: "LD SP, d16"  , byte_size: 3, clock_tick: 12, function: ld_sp_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x32, disassembly: "LD (HL-), A" , byte_size: 1, clock_tick: 8 , function: ld_hld_addr_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0x33, disassembly: "INC SP"      , byte_size: 1, clock_tick: 8 , function: inc_sp }),
     GenericInstruction::VOID(  Instruction { opcode: 0x34, disassembly: "INC (HL)"    , byte_size: 1, clock_tick: 12, function: inc_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0x35, disassembly: "DEC (HL)"    , byte_size: 1, clock_tick: 12, function: dec_hl_addr }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x36, disassembly: "LD (HL), d8" , byte_size: 2, clock_tick: 12, function: ld_hl_addr_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x36, disassembly: "LD (HL), d8" , byte_size: 2, clock_tick: 12, function: ld_hl_addr_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x37, disassembly: "SCF"         , byte_size: 1, clock_tick: 4 , function: scf }),
     GenericInstruction::OFFSET(Instruction { opcode: 0x38, disassembly: "JR C, r8"    , byte_size: 2, clock_tick: 8 , function: jr_c_r8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x39, disassembly: "ADD HL, SP"  , byte_size: 1, clock_tick: 8 , function: add_hl_sp }),
@@ -78,7 +69,7 @@ pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x3B, disassembly: "DEC SP"      , byte_size: 1, clock_tick: 8 , function: dec_sp }),
     GenericInstruction::VOID(  Instruction { opcode: 0x3C, disassembly: "INC A"       , byte_size: 1, clock_tick: 4 , function: inc_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0x3D, disassembly: "DEC A"       , byte_size: 1, clock_tick: 4 , function: dec_a }),
-    GenericInstruction::DATA8( Instruction { opcode: 0x3E, disassembly: "LD A, d8"    , byte_size: 2, clock_tick: 8 , function: ld_a_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0x3E, disassembly: "LD A, d8"    , byte_size: 2, clock_tick: 8 , function: ld_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x3F, disassembly: "CCF"         , byte_size: 1, clock_tick: 4 , function: ccf }),
     GenericInstruction::VOID(  Instruction { opcode: 0x40, disassembly: "LD B, B"     , byte_size: 1, clock_tick: 4 , function: ld_b_b }),
     GenericInstruction::VOID(  Instruction { opcode: 0x41, disassembly: "LD B, C"     , byte_size: 1, clock_tick: 4 , function: ld_b_c }),
@@ -210,21 +201,21 @@ pub static INSTRUCTIONS: [GenericInstruction; 208] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xBF, disassembly: "CP A, A"     , byte_size: 1, clock_tick: 4 , function: cp_a_a }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC0, disassembly: "RET NZ"      , byte_size: 1, clock_tick: 8 , function: ret_nz }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC1, disassembly: "POP BC"      , byte_size: 1, clock_tick: 12, function: pop_bc }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xC2, disassembly: "JP NZ, a16"  , byte_size: 3, clock_tick: 12, function: jp_nz_a16 }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xC3, disassembly: "JP a16"      , byte_size: 3, clock_tick: 16, function: jp_a16 }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xC4, disassembly: "CALL NZ, a16", byte_size: 3, clock_tick: 12, function: call_nz_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xC2, disassembly: "JP NZ, a16"  , byte_size: 3, clock_tick: 12, function: jp_nz_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xC3, disassembly: "JP a16"      , byte_size: 3, clock_tick: 16, function: jp_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xC4, disassembly: "CALL NZ, a16", byte_size: 3, clock_tick: 12, function: call_nz_a16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC5, disassembly: "PUSH BC"     , byte_size: 1, clock_tick: 16, function: push_bc }),
-    GenericInstruction::DATA8( Instruction { opcode: 0xC6, disassembly: "ADD A, d8"   , byte_size: 2, clock_tick: 8 , function: add_a_d8 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0xC6, disassembly: "ADD A, d8"   , byte_size: 2, clock_tick: 8 , function: add_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC7, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_00h }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC8, disassembly: "RET Z"       , byte_size: 1, clock_tick: 8 , function: ret_z }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC9, disassembly: "RET"         , byte_size: 1, clock_tick: 16, function: ret }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xCA, disassembly: "JP Z, a16"   , byte_size: 3, clock_tick: 12, function: jp_z_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xCA, disassembly: "JP Z, a16"   , byte_size: 3, clock_tick: 12, function: jp_z_a16 }),
     // TODO: $CB is the prefix for wide operations, so find a way to manage this
     // I will probably just check before executing an ops to check if it was the prefix, so the instruction doesn't need any function
-    GenericInstruction::VOID(  Instruction { opcode: 0xCB, disassembly: "PREFIX"      , byte_size: 1, clock_tick: 4 , function: unimplemented }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xCC, disassembly: "CALL Z, a16" , byte_size: 3, clock_tick: 12, function: call_z_a16 }),
-    GenericInstruction::ADDR16(Instruction { opcode: 0xCD, disassembly: "CALL a16"    , byte_size: 3, clock_tick: 24, function: call_a16 }),
-    GenericInstruction::DATA8( Instruction { opcode: 0xCE, disassembly: "ADC A, d8"   , byte_size: 2, clock_tick: 8 , function: adc_a_d8 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xCB, disassembly: "PREFIX"      , byte_size: 1, clock_tick: 4 , function: prefix }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xCC, disassembly: "CALL Z, a16" , byte_size: 3, clock_tick: 12, function: call_z_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xCD, disassembly: "CALL a16"    , byte_size: 3, clock_tick: 24, function: call_a16 }),
+    GenericInstruction::VALUE( Instruction { opcode: 0xCE, disassembly: "ADC A, d8"   , byte_size: 2, clock_tick: 8 , function: adc_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xCF, disassembly: "RST 00H"     , byte_size: 1, clock_tick: 16, function: rst_08h }),
 ];
 

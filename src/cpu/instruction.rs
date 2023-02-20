@@ -1,18 +1,10 @@
 use crate::cpu::memory::Memory;
 use crate::cpu::operations::operations::INSTRUCTIONS;
 use crate::utils::log::log;
-use crate::utils::types::{FarAddress, NearAddress, AddressOffset, Value, Void, WideValue};
+use crate::utils::types::{FarAddress, AddressOffset, Value, WideValue, NearAddress};
 
 pub type OpCode = u8;
-pub type InstructionFn<T> = fn(&Instruction<T>, &mut Memory, values: T);
-
-// Instruction type aliases
-pub type VoidInstruction = Instruction<Void>;
-pub type ValueInstruction = Instruction<Value>;
-pub type WideValueInstruction = Instruction<WideValue>;
-pub type NearAddressInstruction = Instruction<NearAddress>;
-pub type FarAddressInstruction = Instruction<FarAddress>;
-pub type OffsetInstruction = Instruction<AddressOffset>;
+pub type InstructionFn<T> = fn(&mut Memory, value: T);
 
 #[derive(Clone, Copy)]
 pub struct Instruction<T> {
@@ -27,16 +19,16 @@ pub struct Instruction<T> {
 pub enum GenericInstruction {
     /// Doesn't take any operand
     VOID(Instruction<()>),
-    /// Takes 8-bit data operand
-    DATA8(Instruction<Value>),
-    /// Takes 16-bit little-endian data
-    DATA16(Instruction<WideValue>),
-    /// Takes 8-bit data (offset for $FF00)
-    ADDR8(Instruction<NearAddress>),
-    /// Takes 16-bit little endian address
-    ADDR16(Instruction<FarAddress>),
-    /// Takes 8-bit signed data
-    OFFSET(Instruction<AddressOffset>)
+    /// Takes 8-bit data operand                                        [d8]
+    VALUE(Instruction<Value>),
+    /// Takes 16-bit little-endian data                                 [d16]
+    WIDE(Instruction<WideValue>),
+    /// Takes 8-bit data (offset from $FF00)                            [a8]
+    NEAR(Instruction<NearAddress>),
+    /// Takes 16-bit little endian address                              [a16]
+    FAR(Instruction<FarAddress>),
+    /// Takes 8-bit signed data, effectively an offset for an address   [r8]
+    OFFSET(Instruction<AddressOffset>),
 }
 
 impl<T> std::fmt::Debug for Instruction<T> {
@@ -53,7 +45,7 @@ impl<T> std::fmt::Debug for Instruction<T> {
 impl<T> Instruction<T> {
     pub fn execute(&self, memory: &mut Memory, value: T) {
         log!("INSTRUCTION", format!("Executing {:?}", self));
-        (self.function)(self, memory, value);
+        (self.function)(memory, value);
     }
 }
 

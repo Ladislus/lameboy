@@ -1,14 +1,3 @@
-macro_rules! function_path {
-    () => {{
-        fn f() {}
-        fn type_name_of<T>(_: T) -> &'static str {
-            std::any::type_name::<T>()
-        }
-        let name = type_name_of(f);
-        &name[..name.len() - 3]
-    }};
-}
-
 macro_rules! function_name {
     () => {{
         fn f() {}
@@ -26,7 +15,7 @@ macro_rules! function_name {
 }
 
 #[allow(unused_imports)]
-pub(crate) use {function_name, function_path};
+pub(crate) use function_name;
 
 #[cfg(debug_assertions)]
 macro_rules! log {

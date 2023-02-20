@@ -1,6 +1,5 @@
-use crate::cpu::instruction::{ValueInstruction, VoidInstruction};
 use crate::cpu::memory::Memory;
-use crate::utils::bits::{check_half_carry_add, check_half_carry_wide_add, check_half_carry_sub, check_half_carry_wide_sub, bit_size};
+use crate::utils::bits::{check_half_carry_add, check_half_carry_wide_add, check_half_carry_sub, bit_size};
 use crate::utils::log::log;
 use crate::utils::types::{Value, Void};
 
@@ -117,35 +116,35 @@ macro_rules! template_sub_a {
 
 //  ########## 8-bits ###########
 
-pub fn inc_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_a(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn inc_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_b(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn inc_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_c(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn inc_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_d(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn inc_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_e(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn inc_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_h(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn inc_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_l(memory: &mut Memory, _value: Void) {
     template_inc_value!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn inc_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_hl_addr(memory: &mut Memory, _value: Void) {
     let hl_value = memory.registers.get_hl();
     let read_value = memory.read_far_addr(hl_value);
     let new_value = read_value + 1;
@@ -158,19 +157,19 @@ pub fn inc_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) 
 
 //  ######### 16-bits ###########
 
-pub fn inc_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_bc(memory: &mut Memory, _value: Void) {
     template_inc_wide!(memory.registers.BC.as_wide);
 }
 
-pub fn inc_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_de(memory: &mut Memory, _value: Void) {
     template_inc_wide!(memory.registers.DE.as_wide);
 }
 
-pub fn inc_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_hl(memory: &mut Memory, _value: Void) {
     template_inc_wide!(memory.registers.HL.as_wide);
 }
 
-pub fn inc_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn inc_sp(memory: &mut Memory, _value: Void) {
     template_inc_wide!(memory.registers.SP);
 }
 
@@ -180,35 +179,35 @@ pub fn inc_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 
 //  ########## 8-bits ###########
 
-pub fn dec_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_a(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn dec_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_b(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn dec_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_c(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn dec_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_d(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn dec_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_e(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn dec_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_h(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn dec_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_l(memory: &mut Memory, _value: Void) {
     template_dec_value!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn dec_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_hl_addr(memory: &mut Memory, _value: Void) {
     let hl_value = memory.registers.get_hl();
     let read_value = memory.read_far_addr(hl_value);
     let new_value = read_value - 1;
@@ -221,19 +220,19 @@ pub fn dec_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) 
 
 //  ######### 16-bits ###########
 
-pub fn dec_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_bc(memory: &mut Memory, _value: Void) {
     template_dec_wide!(memory.registers.BC.as_wide);
 }
 
-pub fn dec_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_de(memory: &mut Memory, _value: Void) {
     template_dec_wide!(memory.registers.DE.as_wide);
 }
 
-pub fn dec_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_hl(memory: &mut Memory, _value: Void) {
     template_dec_wide!(memory.registers.HL.as_wide);
 }
 
-pub fn dec_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn dec_sp(memory: &mut Memory, _value: Void) {
     template_dec_wide!(memory.registers.SP);
 }
 
@@ -243,57 +242,57 @@ pub fn dec_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 
 //  ########## 8-bits ###########
 
-pub fn add_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+pub fn add_a_d8(memory: &mut Memory, value: Value) {
     template_add_a!(memory, value);
 }
 
-pub fn add_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_a(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn add_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_b(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn add_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_c(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn add_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_d(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn add_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_e(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn add_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_h(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn add_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_l(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn add_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }
 
 //  ######### 16-bits ###########
 
-pub fn add_hl_bc(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_hl_bc(memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.BC.as_wide);
 }
 
-pub fn add_hl_de(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_hl_de(memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.DE.as_wide);
 }
 
-pub fn add_hl_hl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_hl_hl(memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.HL.as_wide);
 }
 
-pub fn add_hl_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn add_hl_sp(memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.SP);
 }
 
@@ -301,35 +300,35 @@ pub fn add_hl_sp(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 //  #        Subtraction        #
 //  #############################
 
-pub fn sub_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_a(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.AF.as_pair.0);
 }
 
-pub fn sub_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_b(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.BC.as_pair.0);
 }
 
-pub fn sub_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_c(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.BC.as_pair.1);
 }
 
-pub fn sub_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_d(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.DE.as_pair.0);
 }
 
-pub fn sub_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_e(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.DE.as_pair.1);
 }
 
-pub fn sub_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_h(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.HL.as_pair.0);
 }
 
-pub fn sub_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_l(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.HL.as_pair.1);
 }
 
-pub fn sub_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sub_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.read_far_addr(memory.registers.get_hl()));
 }
 
@@ -337,39 +336,39 @@ pub fn sub_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
 //  #    Addition with Carry    #
 //  #############################
 
-pub fn adc_a_d8(_instr: &ValueInstruction, memory: &mut Memory, value: Value) {
+pub fn adc_a_d8(memory: &mut Memory, value: Value) {
     template_add_a!(memory, value + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_a(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_b(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.BC.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_c(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.BC.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_d(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.DE.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_e(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.DE.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_h(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.HL.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_l(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.registers.HL.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn adc_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn adc_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_add_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (memory.registers.get_carry_flag() as Value));
 }
 
@@ -377,35 +376,35 @@ pub fn adc_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
 //  #  Subtraction with Carry   #
 //  #############################
 
-pub fn sbc_a_a(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_a(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_b(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_b(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.BC.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_c(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_c(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.BC.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_d(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_d(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.DE.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_e(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_e(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.DE.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_h(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_h(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.HL.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_l(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_l(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.HL.as_pair.1 + (memory.registers.get_carry_flag() as Value));
 }
 
-pub fn sbc_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn sbc_a_hl_addr(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (memory.registers.get_carry_flag() as Value));
 }
 
@@ -414,7 +413,7 @@ pub fn sbc_a_hl_addr(_instr: &VoidInstruction, memory: &mut Memory, _value: Void
 //  #############################
 
 /// Complement accumulator
-pub fn cpl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn cpl(memory: &mut Memory, _value: Void) {
     memory.registers.set_a(!memory.registers.get_a());
 
     memory.registers.set_subtraction_flag(true);
@@ -422,14 +421,14 @@ pub fn cpl(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 }
 
 /// Complement carry flag
-pub fn ccf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn ccf(memory: &mut Memory, _value: Void) {
     memory.registers.set_subtraction_flag(false);
     memory.registers.set_half_carry_flag(false);
     memory.registers.set_carry_flag(!memory.registers.get_carry_flag());
 }
 
 // Set carry flag
-pub fn scf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn scf(memory: &mut Memory, _value: Void) {
     memory.registers.set_subtraction_flag(false);
     memory.registers.set_half_carry_flag(false);
     memory.registers.set_carry_flag(true);
@@ -437,7 +436,7 @@ pub fn scf(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
 
 // TODO: Check
 /// Decimal Adjust Accumulator to get a correct BCD representation after an arithmetic instruction.
-pub fn daa(_instr: &VoidInstruction, memory: &mut Memory, _value: Void) {
+pub fn daa(memory: &mut Memory, _value: Void) {
     // Documentation:
     // http://z80-heaven.wikidot.com/instructions-set:daa
     // https://fr.wikibooks.org/wiki/Programmation_Assembleur_Z80/Jeu_d_instructions#DAA
