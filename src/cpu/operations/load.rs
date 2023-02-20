@@ -433,7 +433,7 @@ pub fn push_de(memory: &mut Memory, _value: Void) {
     memory.stack.push_wide(&mut memory.registers.SP, de_value);
 }
 
-//  ########### Pop  ############
+//  ########### Pop #############
 
 // TODO: Check
 pub fn pop_bc(memory: &mut Memory, _value: Void) {
