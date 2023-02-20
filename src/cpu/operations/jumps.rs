@@ -1,4 +1,5 @@
 use crate::cpu::memory::Memory;
+use crate::cpu::operations::misc::ei;
 use crate::utils::types::{AddressOffset, FarAddress, Void};
 
 //  #############################
@@ -46,9 +47,7 @@ pub fn ret(memory: &mut Memory, _value: Void) {
 }
 
 pub fn reti(memory: &mut Memory, _value: Void) {
-    // https://rgbds.gbdev.io/docs/v0.6.0/gbz80.7/#RETI
-    // Return from subroutine and enable interrupts. This is basically equivalent to executing EI then RET, meaning that IME is set right after this instruction.
-    // TODO Enable interrupt
+    ei(memory, _value);
     ret(memory, _value);
 }
 
@@ -74,6 +73,10 @@ pub fn ret_nc(memory: &mut Memory, _value: Void) {
 
 pub fn jp_a16(memory: &mut Memory, value: FarAddress) {
     memory.registers.PC = value;
+}
+
+pub fn jp_hl(memory: &mut Memory, _value: Void) {
+    memory.registers.PC = memory.registers.get_hl();
 }
 
 pub fn jp_z_a16(memory: &mut Memory, value: FarAddress) {
@@ -140,4 +143,20 @@ pub fn rst_10h(memory: &mut Memory, _value: Void) {
 
 pub fn rst_18h(memory: &mut Memory, _value: Void) {
     template_rst(memory, 0x18);
+}
+
+pub fn rst_20h(memory: &mut Memory, _value: Void) {
+    template_rst(memory, 0x20);
+}
+
+pub fn rst_28h(memory: &mut Memory, _value: Void) {
+    template_rst(memory, 0x28);
+}
+
+pub fn rst_30h(memory: &mut Memory, _value: Void) {
+    template_rst(memory, 0x30);
+}
+
+pub fn rst_38h(memory: &mut Memory, _value: Void) {
+    template_rst(memory, 0x38);
 }

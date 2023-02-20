@@ -1,7 +1,7 @@
 use crate::cpu::memory::Memory;
 use crate::utils::bits::{check_half_carry_add, check_half_carry_wide_add, check_half_carry_sub, bit_size};
 use crate::utils::log::log;
-use crate::utils::types::{Value, Void};
+use crate::utils::types::{AddressOffset, FarAddress, Value, Void};
 
 //  #############################
 //  #         Template          #
@@ -65,7 +65,7 @@ macro_rules! template_add_a {
             $memory.registers.set_subtraction_flag(false);
             // H => Set if overflow from bit 3.
             $memory.registers.set_half_carry_flag(check_half_carry_add(old_value, value));
-            // C => Set if overflow from bit 15.
+            // C => Set if overflow from bit 7.
             $memory.registers.set_carry_flag(has_overflown);
         }
     };
@@ -294,6 +294,23 @@ pub fn add_hl_hl(memory: &mut Memory, _value: Void) {
 
 pub fn add_hl_sp(memory: &mut Memory, _value: Void) {
     template_add_hl!(memory, memory.registers.SP);
+}
+
+// TODO: Check
+pub fn add_sp_r8(memory: &mut Memory, value: AddressOffset) {
+    let old_value = memory.registers.SP;
+    let value = value as FarAddress;
+
+    let (result, has_overflown) = old_value.overflowing_add(value);
+
+    memory.registers.SP = result;
+
+    memory.registers.set_zero_flag(false);
+    memory.registers.set_half_carry_flag(false);
+    // The doc https://rgbds.gbdev.io/docs/v0.6.1/gbz80.7#ADD_SP,e8 says bit 3 & 7, which is the bits for 8-bits values
+    // But SP is 16-bits, so check if the doc is actually right or not
+    memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, value));
+    memory.registers.set_carry_flag(has_overflown);
 }
 
 //  #############################

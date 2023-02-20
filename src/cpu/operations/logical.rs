@@ -1,7 +1,7 @@
 use crate::cpu::memory::Memory;
 use crate::utils::bits::{assign_bit, get_bit, max_bit_index, bit_size, check_half_carry_sub};
 use crate::utils::log::log;
-use crate::utils::types::Void;
+use crate::utils::types::{Value, Void};
 
 //  #############################
 //  #         Template          #
@@ -166,6 +166,10 @@ pub fn rrca(memory: &mut Memory, _value: Void) {
 //  #          Bit And          #
 //  #############################
 
+pub fn and_a_d8(memory: &mut Memory, value: Value) {
+    template_and_a!(memory, value);
+}
+
 pub fn and_a_a(memory: &mut Memory, _value: Void) {
     template_and_a!(memory, memory.registers.AF.as_pair.0);
 }
@@ -201,6 +205,10 @@ pub fn and_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #############################
 //  #          Bit Or           #
 //  #############################
+
+pub fn or_a_d8(memory: &mut Memory, value: Value) {
+    template_or_a!(memory, value);
+}
 
 pub fn or_a_a(memory: &mut Memory, _value: Void) {
     template_or_a!(memory, memory.registers.AF.as_pair.0);
@@ -238,6 +246,10 @@ pub fn or_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #          Bit Xor          #
 //  #############################
 
+pub fn xor_a_d8(memory: &mut Memory, value: Value) {
+    template_xor_a!(memory, value);
+}
+
 pub fn xor_a_a(memory: &mut Memory, _value: Void) {
     template_xor_a!(memory, memory.registers.AF.as_pair.0);
 }
@@ -273,6 +285,10 @@ pub fn xor_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #############################
 //  #        Comparison         #
 //  #############################
+
+pub fn cp_a_d8(memory: &mut Memory, value: Value) {
+    template_cp_a!(memory, value);
+}
 
 pub fn cp_a_a(memory: &mut Memory, _value: Void) {
     template_cp_a!(memory, memory.registers.AF.as_pair.0);

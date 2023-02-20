@@ -1,5 +1,6 @@
 use crate::cpu::memory::Memory;
-use crate::utils::types::{FarAddress, Value, Void, WideValue};
+use crate::utils::bits::check_half_carry_wide_add;
+use crate::utils::types::{AddressOffset, FarAddress, NearAddress, Value, Void, WideValue};
 
 //  #############################
 //  #         Template          #
@@ -54,6 +55,18 @@ pub fn ld_a_l(memory: &mut Memory, _value: Void) {
     template_ld!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.1);
 }
 
+pub fn ldh_a_a8_addr(memory: &mut Memory, value: NearAddress) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.read_near_addr(value));
+}
+
+pub fn ld_a_c_addr(memory: &mut Memory, _value: Void) {
+    memory.registers.set_a(memory.read_near_addr(memory.registers.get_c()));
+}
+
+pub fn ld_a_a16_addr(memory: &mut Memory, value: FarAddress) {
+    template_ld!(memory.registers.AF.as_pair.0, memory.read_far_addr(value));
+}
+
 pub fn ld_a_bc_addr(memory: &mut Memory, _value: Void) {
     memory.registers.set_a(memory.read_far_addr(memory.registers.get_bc()));
 }
@@ -80,6 +93,14 @@ pub fn ld_a_hld_addr(memory: &mut Memory, _value: Void) {
 
     memory.registers.set_hl(hl_value - 1);
     memory.registers.set_a(read_value);
+}
+
+pub fn ldh_a8_addr_a(memory: &mut Memory, value: NearAddress) {
+    memory.write_near_addr(value, memory.registers.get_a());
+}
+
+pub fn ld_a16_addr_a(memory: &mut Memory, value: FarAddress) {
+    memory.write_far_addr(value, memory.registers.get_a());
 }
 
 //  ############# B #############
@@ -160,6 +181,10 @@ pub fn ld_c_l(memory: &mut Memory, _value: Void) {
 
 pub fn ld_c_hl_addr(memory: &mut Memory, _value: Void) {
     template_ld!(memory.registers.BC.as_pair.1, memory.read_far_addr(memory.registers.get_hl()));
+}
+
+pub fn ld_c_addr_a(memory: &mut Memory, _value: Void) {
+    memory.write_near_addr(memory.registers.get_c(), memory.registers.get_a());
 }
 
 //  ############ BC #############
@@ -336,6 +361,21 @@ pub fn ld_l_hl_addr(memory: &mut Memory, _value: Void) {
 
 //  ############ HL #############
 
+pub fn ld_hl_sp_plus_r8(memory: &mut Memory, value: AddressOffset) {
+    let value = value as FarAddress;
+    let old_value = memory.registers.SP;
+
+    let (result, has_overflown) = old_value.overflowing_add(value);
+
+    memory.registers.set_hl(result);
+
+    memory.registers.set_zero_flag(false);
+    memory.registers.set_subtraction_flag(false);
+    // The doc https://rgbds.gbdev.io/docs/v0.6.1/gbz80.7#LD_HL,SP+e8 says bit 3 & 7, which is the bits for 8-bits values
+    // But SP is 16-bits, so check if the doc is actually right or not
+    memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, value));
+    memory.registers.set_carry_flag(has_overflown);
+}
 
 pub fn ld_hl_addr_d8(memory: &mut Memory, value: Value) {
     memory.write_far_addr(memory.registers.get_hl(), value);
@@ -411,6 +451,10 @@ pub fn ld_sp_d16(memory: &mut Memory, value: WideValue) {
     template_ld!(memory.registers.SP, value);
 }
 
+pub fn ld_sp_hl(memory: &mut Memory, _value: Void) {
+    template_ld!(memory.registers.SP, memory.registers.get_hl());
+}
+
 pub fn ld_a16_addr_sp(memory: &mut Memory, value: FarAddress) {
     memory.write_wide_far_addr(value, memory.registers.SP);
 }
@@ -420,6 +464,12 @@ pub fn ld_a16_addr_sp(memory: &mut Memory, value: FarAddress) {
 //  #############################
 
 //  ########### Push ############
+
+// TODO: Check
+pub fn push_af(memory: &mut Memory, _value: Void) {
+    let af_value = memory.registers.get_af();
+    memory.stack.push_wide(&mut memory.registers.SP, af_value);
+}
 
 // TODO: Check
 pub fn push_bc(memory: &mut Memory, _value: Void) {
@@ -433,7 +483,21 @@ pub fn push_de(memory: &mut Memory, _value: Void) {
     memory.stack.push_wide(&mut memory.registers.SP, de_value);
 }
 
+// TODO: Check
+pub fn push_hl(memory: &mut Memory, _value: Void) {
+    let hl_value = memory.registers.get_hl();
+    memory.stack.push_wide(&mut memory.registers.SP, hl_value);
+}
+
 //  ########### Pop #############
+
+// TODO: Check
+pub fn pop_af(memory: &mut Memory, _value: Void) {
+    let value = memory.stack.pop_wide(&mut memory.registers.SP);
+    memory.registers.set_af(value);
+
+    // No need to set the bits, as F already contains them
+}
 
 // TODO: Check
 pub fn pop_bc(memory: &mut Memory, _value: Void) {
@@ -444,4 +508,9 @@ pub fn pop_bc(memory: &mut Memory, _value: Void) {
 pub fn pop_de(memory: &mut Memory, _value: Void) {
     let value = memory.stack.pop_wide(&mut memory.registers.SP);
     memory.registers.set_de(value);
+}
+
+pub fn pop_hl(memory: &mut Memory, _value: Void) {
+    let value = memory.stack.pop_wide(&mut memory.registers.SP);
+    memory.registers.set_hl(value);
 }
