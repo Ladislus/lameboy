@@ -6,7 +6,7 @@ use crate::cpu::operations::misc::*;
 use crate::cpu::operations::arithmetic::*;
 
 // TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
-pub static INSTRUCTIONS: [GenericInstruction; 221] = [
+pub static INSTRUCTIONS: [GenericInstruction; 224] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"         , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::WIDE(  Instruction { opcode: 0x01, disassembly: "LD BC, d16"  , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "LD (BC), A"  , byte_size: 1, clock_tick: 8 , function: ld_bc_addr_a }),
@@ -229,7 +229,10 @@ pub static INSTRUCTIONS: [GenericInstruction; 221] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xD9, disassembly: "RETI"        , byte_size: 1, clock_tick: 16, function: reti }),
     GenericInstruction::FAR(   Instruction { opcode: 0xDA, disassembly: "JP C, a16"   , byte_size: 3, clock_tick: 12, function: jp_c_a16 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xDB, disassembly: "X"           , byte_size: 0, clock_tick: 0 , function: none }),
-    GenericInstruction::FAR(   Instruction { opcode: 0xDB, disassembly: "CALL C, a16" , byte_size: 3, clock_tick: 12, function: call_c_a16 }),
+    GenericInstruction::FAR(   Instruction { opcode: 0xDC, disassembly: "CALL C, a16" , byte_size: 3, clock_tick: 12, function: call_c_a16 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xDD, disassembly: "X"           , byte_size: 0, clock_tick: 0 , function: none }),
+    GenericInstruction::VALUE( Instruction { opcode: 0xDE, disassembly: "SBC A, d8"   , byte_size: 2, clock_tick: 8 , function: sbc_a_d8 }),
+    GenericInstruction::VOID(  Instruction { opcode: 0xDF, disassembly: "RST 18H"     , byte_size: 1, clock_tick: 16, function: rst_18h }),
 ];
 
 // TODO: add tests

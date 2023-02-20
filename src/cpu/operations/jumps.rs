@@ -137,3 +137,7 @@ pub fn rst_08h(memory: &mut Memory, _value: Void) {
 pub fn rst_10h(memory: &mut Memory, _value: Void) {
     template_rst(memory, 0x10);
 }
+
+pub fn rst_18h(memory: &mut Memory, _value: Void) {
+    template_rst(memory, 0x18);
+}

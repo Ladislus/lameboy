@@ -380,6 +380,10 @@ pub fn adc_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #  Subtraction with Carry   #
 //  #############################
 
+pub fn sbc_a_d8(memory: &mut Memory, value: Value) {
+    template_sub_a!(memory, value + (memory.registers.get_carry_flag() as Value));
+}
+
 pub fn sbc_a_a(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
 }
