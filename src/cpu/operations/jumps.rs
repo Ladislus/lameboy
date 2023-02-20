@@ -24,6 +24,20 @@ pub fn call_nz_a16(memory: &mut Memory, value: FarAddress) {
     }
 }
 
+pub fn call_c_a16(memory: &mut Memory, value: FarAddress) {
+    if memory.registers.get_carry_flag() {
+        memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
+        memory.registers.PC = value;
+    }
+}
+
+pub fn call_nc_a16(memory: &mut Memory, value: FarAddress) {
+    if !memory.registers.get_carry_flag() {
+        memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
+        memory.registers.PC = value;
+    }
+}
+
 //  #############################
 //  #          Returns          #
 //  #############################
@@ -31,6 +45,14 @@ pub fn call_nz_a16(memory: &mut Memory, value: FarAddress) {
 // TODO: Check
 pub fn ret(memory: &mut Memory, _value: Void) {
     memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
+}
+
+// TODO: Check
+pub fn reti(memory: &mut Memory, _value: Void) {
+    // https://rgbds.gbdev.io/docs/v0.6.0/gbz80.7/#RETI
+    // Return from subroutine and enable interrupts. This is basically equivalent to executing EI then RET, meaning that IME is set right after this instruction.
+    memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
+    todo!("Enable interrupt");
 }
 
 // TODO: Check
@@ -43,6 +65,20 @@ pub fn ret_z(memory: &mut Memory, _value: Void) {
 // TODO: Check
 pub fn ret_nz(memory: &mut Memory, _value: Void) {
     if !memory.registers.get_zero_flag() {
+        memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
+    }
+}
+
+// TODO: Check
+pub fn ret_c(memory: &mut Memory, _value: Void) {
+    if memory.registers.get_carry_flag() {
+        memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
+    }
+}
+
+// TODO: Check
+pub fn ret_nc(memory: &mut Memory, _value: Void) {
+    if !memory.registers.get_carry_flag() {
         memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
     }
 }
@@ -63,6 +99,18 @@ pub fn jp_z_a16(memory: &mut Memory, value: FarAddress) {
 
 pub fn jp_nz_a16(memory: &mut Memory, value: FarAddress) {
     if !memory.registers.get_zero_flag() {
+        memory.registers.PC = value;
+    }
+}
+
+pub fn jp_c_a16(memory: &mut Memory, value: FarAddress) {
+    if memory.registers.get_carry_flag() {
+        memory.registers.PC = value;
+    }
+}
+
+pub fn jp_nc_a16(memory: &mut Memory, value: FarAddress) {
+    if !memory.registers.get_carry_flag() {
         memory.registers.PC = value;
     }
 }
@@ -123,4 +171,10 @@ pub fn rst_00h(memory: &mut Memory, _value: Void) {
 pub fn rst_08h(memory: &mut Memory, _value: Void) {
     memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
     memory.registers.PC = 0x08;
+}
+
+// TODO: Check
+pub fn rst_10h(memory: &mut Memory, _value: Void) {
+    memory.stack.push_wide(&mut memory.registers.SP, memory.registers.PC);
+    memory.registers.PC = 0x10;
 }

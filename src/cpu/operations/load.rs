@@ -427,10 +427,21 @@ pub fn push_bc(memory: &mut Memory, _value: Void) {
     memory.stack.push_wide(&mut memory.registers.SP, bc_value);
 }
 
+// TODO: Check
+pub fn push_de(memory: &mut Memory, _value: Void) {
+    let de_value = memory.registers.get_de();
+    memory.stack.push_wide(&mut memory.registers.SP, bc_value);
+}
+
 //  ########### Pop  ############
 
 // TODO: Check
 pub fn pop_bc(memory: &mut Memory, _value: Void) {
     let value = memory.stack.pop_wide(&mut memory.registers.SP);
     memory.registers.set_bc(value);
+}
+
+pub fn pop_de(memory: &mut Memory, _value: Void) {
+    let value = memory.stack.pop_wide(&mut memory.registers.SP);
+    memory.registers.set_de(value);
 }

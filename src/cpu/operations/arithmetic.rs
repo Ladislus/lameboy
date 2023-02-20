@@ -300,6 +300,10 @@ pub fn add_hl_sp(memory: &mut Memory, _value: Void) {
 //  #        Subtraction        #
 //  #############################
 
+pub fn sub_a_d8(memory: &mut Memory, value: Value) {
+    template_sub_a!(memory, value);
+}
+
 pub fn sub_a_a(memory: &mut Memory, _value: Void) {
     template_sub_a!(memory, memory.registers.AF.as_pair.0);
 }
