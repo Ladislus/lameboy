@@ -33,7 +33,7 @@ macro_rules! log {
     ($prefix:literal, $msg:expr) => {
         // Because macro arguments don't have types, force type by assigning to variable which is typed
         let _p: &str = $prefix;
-        println!("{:<70}\t{}", format!("{:<15} {:<30} {:<20}", format!("[{}]", $prefix), format!("({}:{})", file!(), line!()), format!("<{}>", crate::utils::log::function_name!())), $msg);
+        println!("{:<70}\t{}", format!("{:<15} {:<40} {:<20}", format!("[{}]", $prefix), format!("({}:{})", file!(), line!()), format!("<{}>", crate::utils::log::function_name!())), $msg);
     };
 }
 
