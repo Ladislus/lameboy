@@ -430,7 +430,7 @@ pub fn push_bc(memory: &mut Memory, _value: Void) {
 // TODO: Check
 pub fn push_de(memory: &mut Memory, _value: Void) {
     let de_value = memory.registers.get_de();
-    memory.stack.push_wide(&mut memory.registers.SP, bc_value);
+    memory.stack.push_wide(&mut memory.registers.SP, de_value);
 }
 
 //  ########### Pop  ############
