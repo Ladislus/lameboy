@@ -21,3 +21,4 @@ An umpteenth worthless Game Boy emulator, written in Rust, just to learn how emu
 ### Similar projects
 - [Cinoop](https://cturt.github.io/cinoop.html)
 - [0dmg](https://jeremybanks.github.io/0dmg/)
+- [rboy](https://github.com/mvdnes/rboy)
