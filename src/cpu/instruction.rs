@@ -1,10 +1,12 @@
 use crate::cpu::memory::Memory;
-use crate::cpu::operations::operations::INSTRUCTIONS;
+use crate::cpu::operations::operations::{INSTRUCTIONS, PREFIXED};
 use crate::utils::log::log;
 use crate::utils::types::{FarAddress, AddressOffset, Value, WideValue, NearAddress};
 
 pub type OpCode = u8;
 pub type InstructionFn<T> = fn(&mut Memory, value: T);
+
+pub const PREFIXED_OPCODE: OpCode = 0xCB;
 
 #[derive(Clone, Copy)]
 pub struct Instruction<T> {
@@ -49,8 +51,14 @@ impl<T> Instruction<T> {
     }
 }
 
-pub fn instruction_from_opcode(opcode: OpCode) -> GenericInstruction {
+pub fn instruction_from_opcode(opcode: OpCode, prefixed: bool) -> GenericInstruction {
     let opcode = opcode as usize;
-    debug_assert!(opcode < INSTRUCTIONS.len());
-    return INSTRUCTIONS[opcode];
+
+    return if prefixed {
+        debug_assert!(opcode < PREFIXED.len(), "PREFIX.len()={} > opcode={}", PREFIXED.len(), opcode);
+        PREFIXED[opcode]
+    } else {
+        debug_assert!(opcode < INSTRUCTIONS.len(), "INSTRUCTIONS.len()={} > opcode={}", PREFIXED.len(), opcode);
+        INSTRUCTIONS[opcode]
+    }
 }

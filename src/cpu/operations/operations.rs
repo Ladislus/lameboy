@@ -1,11 +1,12 @@
 use crate::cpu::instruction::{GenericInstruction, Instruction};
 use crate::cpu::operations::load::*;
+use crate::cpu::operations::bits::*;
 use crate::cpu::operations::jumps::*;
 use crate::cpu::operations::logical::*;
 use crate::cpu::operations::misc::*;
 use crate::cpu::operations::arithmetic::*;
 
-// TODO: Fill all instruction names/opcodes, defaulting function to unimplemented
+// TODO: Check/test
 pub static INSTRUCTIONS: [GenericInstruction; 256] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "NOP"           , byte_size: 1, clock_tick: 4 , function: noop }),
     GenericInstruction::WIDE(  Instruction { opcode: 0x01, disassembly: "LD BC, d16"    , byte_size: 3, clock_tick: 12, function: ld_bc_d16 }),
@@ -266,5 +267,41 @@ pub static INSTRUCTIONS: [GenericInstruction; 256] = [
     GenericInstruction::VALUE( Instruction { opcode: 0xFE, disassembly: "CP A, d8"      , byte_size: 2, clock_tick: 8 , function: cp_a_d8 }),
     GenericInstruction::VOID(  Instruction { opcode: 0xFF, disassembly: "RST 38H"       , byte_size: 1, clock_tick: 16, function: rst_38h })
 ];
+
+// TODO: Fill all prefixed instruction names/opcodes
+pub static PREFIXED: [GenericInstruction; 32] = [
+    GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "RLC B"         , byte_size: 2, clock_tick: 8 , function: rlc_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x01, disassembly: "RLC C"         , byte_size: 2, clock_tick: 8 , function: rlc_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "RLC D"         , byte_size: 2, clock_tick: 8 , function: rlc_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x03, disassembly: "RLC E"         , byte_size: 2, clock_tick: 8 , function: rlc_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x04, disassembly: "RLC H"         , byte_size: 2, clock_tick: 8 , function: rlc_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x05, disassembly: "RLC L"         , byte_size: 2, clock_tick: 8 , function: rlc_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x06, disassembly: "RLC (HL)"      , byte_size: 2, clock_tick: 16, function: rlc_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x07, disassembly: "RLC A"         , byte_size: 2, clock_tick: 8 , function: rlc_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x08, disassembly: "RRC B"         , byte_size: 2, clock_tick: 8 , function: rrc_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x09, disassembly: "RRC C"         , byte_size: 2, clock_tick: 8 , function: rrc_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0A, disassembly: "RRC D"         , byte_size: 2, clock_tick: 8 , function: rrc_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0B, disassembly: "RRC E"         , byte_size: 2, clock_tick: 8 , function: rrc_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0C, disassembly: "RRC H"         , byte_size: 2, clock_tick: 8 , function: rrc_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0D, disassembly: "RRC L"         , byte_size: 2, clock_tick: 8 , function: rrc_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0E, disassembly: "RRC (HL)"      , byte_size: 2, clock_tick: 16, function: rrc_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x0F, disassembly: "RRC A"         , byte_size: 2, clock_tick: 8 , function: rrc_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x10, disassembly: "RL B"          , byte_size: 2, clock_tick: 8 , function: rl_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x11, disassembly: "RL C"          , byte_size: 2, clock_tick: 8 , function: rl_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x12, disassembly: "RL D"          , byte_size: 2, clock_tick: 8 , function: rl_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x13, disassembly: "RL E"          , byte_size: 2, clock_tick: 8 , function: rl_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x14, disassembly: "RL H"          , byte_size: 2, clock_tick: 8 , function: rl_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x15, disassembly: "RL L"          , byte_size: 2, clock_tick: 8 , function: rl_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x16, disassembly: "RL (HL)"       , byte_size: 2, clock_tick: 16, function: rl_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x17, disassembly: "RL A"          , byte_size: 2, clock_tick: 8 , function: rl_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x18, disassembly: "RR B"          , byte_size: 2, clock_tick: 8 , function: rr_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x19, disassembly: "RR C"          , byte_size: 2, clock_tick: 8 , function: rr_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1A, disassembly: "RR D"          , byte_size: 2, clock_tick: 8 , function: rr_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1B, disassembly: "RR E"          , byte_size: 2, clock_tick: 8 , function: rr_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1C, disassembly: "RR H"          , byte_size: 2, clock_tick: 8 , function: rr_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1D, disassembly: "RR L"          , byte_size: 2, clock_tick: 8 , function: rr_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1E, disassembly: "RR (HL)"       , byte_size: 2, clock_tick: 16, function: rr_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x1F, disassembly: "RR A"          , byte_size: 2, clock_tick: 8 , function: rr_a }),
+    ];
 
 // TODO: add tests
