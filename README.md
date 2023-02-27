@@ -16,7 +16,7 @@ An umpteenth worthless Game Boy emulator, written in Rust, just to learn how emu
 #### OP Codes
  - [Instruction Set](https://gbdev.io/gb-opcodes/optables/)
  - [Flags & explanation](http://gameboy.mongenel.com/dmg/opcodes.html)
- - [OP Codes description](https://rgbds.gbdev.io/docs/v0.6.0/gbz80.7/#DEC_r16)
+ - [OP Codes description](https://rgbds.gbdev.io/docs/v0.6.0/gbz80.7)
 
 ### Similar projects
 - [Cinoop](https://cturt.github.io/cinoop.html)
