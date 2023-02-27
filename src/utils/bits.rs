@@ -15,18 +15,18 @@ pub fn get_bit<T: Integer + std::ops::Shr<usize, Output = T>>(value: T, bit_inde
     return bit;
 }
 
-pub fn set_bit<T: Integer + std::ops::BitOr<usize, Output = T>>(old_value: T, bit_index: usize) -> T {
+pub fn set_bit<T: Integer + std::ops::BitOr<T, Output = T> + std::ops::Shl<usize, Output = T>>(old_value: T, bit_index: usize) -> T {
     debug_assert!(bit_index < bit_size(old_value));
 
-    let new_value = old_value | (1 << bit_index);
+    let new_value = old_value | (<u8 as Into<T>>::into(1) << bit_index);
     // log!("UTILS", format!("{0:#0width$b}[{2}] ({0}) => {1:#0width$b} ({1})", old_value, new_value, bit_index, width = bit_size(old_value) + 2));
     return new_value;
 }
 
-pub fn clear_bit<T: Integer + std::ops::BitAnd<usize, Output = T>>(old_value: Value, bit_index: usize) -> Value {
+pub fn clear_bit<T: Integer + std::ops::BitAnd<T, Output = T> + std::ops::Shl<usize, Output = T>>(old_value: T, bit_index: usize) -> T {
     debug_assert!(bit_index < bit_size(old_value));
 
-    let new_value = old_value & !(1 << bit_index);
+    let new_value = old_value & !(<u8 as Into<T>>::into(1) << bit_index);
     // log!("UTILS", format!("{0:#0width$b}[{2}] ({0}) => {1:#0width$b} ({1})", old_value, new_value, bit_index,  width = bit_size(old_value) + 2));
     return new_value;
 }
