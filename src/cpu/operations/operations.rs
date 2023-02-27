@@ -269,7 +269,7 @@ pub static INSTRUCTIONS: [GenericInstruction; 256] = [
 ];
 
 // TODO: Fill all prefixed instruction names/opcodes
-pub static PREFIXED: [GenericInstruction; 32] = [
+pub static PREFIXED: [GenericInstruction; 64] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x00, disassembly: "RLC B"         , byte_size: 2, clock_tick: 8 , function: rlc_b }),
     GenericInstruction::VOID(  Instruction { opcode: 0x01, disassembly: "RLC C"         , byte_size: 2, clock_tick: 8 , function: rlc_c }),
     GenericInstruction::VOID(  Instruction { opcode: 0x02, disassembly: "RLC D"         , byte_size: 2, clock_tick: 8 , function: rlc_d }),
@@ -302,6 +302,38 @@ pub static PREFIXED: [GenericInstruction; 32] = [
     GenericInstruction::VOID(  Instruction { opcode: 0x1D, disassembly: "RR L"          , byte_size: 2, clock_tick: 8 , function: rr_l }),
     GenericInstruction::VOID(  Instruction { opcode: 0x1E, disassembly: "RR (HL)"       , byte_size: 2, clock_tick: 16, function: rr_hl_addr }),
     GenericInstruction::VOID(  Instruction { opcode: 0x1F, disassembly: "RR A"          , byte_size: 2, clock_tick: 8 , function: rr_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x20, disassembly: "SLA B"         , byte_size: 2, clock_tick: 8 , function: sla_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x21, disassembly: "SLA C"         , byte_size: 2, clock_tick: 8 , function: sla_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x22, disassembly: "SLA D"         , byte_size: 2, clock_tick: 8 , function: sla_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x23, disassembly: "SLA E"         , byte_size: 2, clock_tick: 8 , function: sla_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x24, disassembly: "SLA H"         , byte_size: 2, clock_tick: 8 , function: sla_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x25, disassembly: "SLA L"         , byte_size: 2, clock_tick: 8 , function: sla_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x26, disassembly: "SLA (HL)"      , byte_size: 2, clock_tick: 16, function: sla_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x27, disassembly: "SLA A"         , byte_size: 2, clock_tick: 8 , function: sla_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x28, disassembly: "SRA B"         , byte_size: 2, clock_tick: 8 , function: sra_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x29, disassembly: "SRA C"         , byte_size: 2, clock_tick: 8 , function: sra_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2A, disassembly: "SRA D"         , byte_size: 2, clock_tick: 8 , function: sra_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2B, disassembly: "SRA E"         , byte_size: 2, clock_tick: 8 , function: sra_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2C, disassembly: "SRA H"         , byte_size: 2, clock_tick: 8 , function: sra_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2E, disassembly: "SRA L"         , byte_size: 2, clock_tick: 8 , function: sra_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2E, disassembly: "SRA (HL)"      , byte_size: 2, clock_tick: 16, function: sra_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x2F, disassembly: "SRA A"         , byte_size: 2, clock_tick: 8 , function: sra_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x30, disassembly: "SWAP B"        , byte_size: 2, clock_tick: 8 , function: swap_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x31, disassembly: "SWAP C"        , byte_size: 2, clock_tick: 8 , function: swap_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x32, disassembly: "SWAP D"        , byte_size: 2, clock_tick: 8 , function: swap_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x33, disassembly: "SWAP E"        , byte_size: 2, clock_tick: 8 , function: swap_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x34, disassembly: "SWAP H"        , byte_size: 2, clock_tick: 8 , function: swap_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x35, disassembly: "SWAP L"        , byte_size: 2, clock_tick: 8 , function: swap_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x36, disassembly: "SWAP (HL)"     , byte_size: 2, clock_tick: 16, function: swap_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x37, disassembly: "SWAP A"        , byte_size: 2, clock_tick: 8 , function: swap_a }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x38, disassembly: "SRL B"         , byte_size: 2, clock_tick: 8 , function: srl_b }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x39, disassembly: "SRL C"         , byte_size: 2, clock_tick: 8 , function: srl_c }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3A, disassembly: "SRL D"         , byte_size: 2, clock_tick: 8 , function: srl_d }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3B, disassembly: "SRL E"         , byte_size: 2, clock_tick: 8 , function: srl_e }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3C, disassembly: "SRL H"         , byte_size: 2, clock_tick: 8 , function: srl_h }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3E, disassembly: "SRL L"         , byte_size: 2, clock_tick: 8 , function: srl_l }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3E, disassembly: "SRL (HL)"      , byte_size: 2, clock_tick: 16, function: srl_hl_addr }),
+    GenericInstruction::VOID(  Instruction { opcode: 0x3F, disassembly: "SRL A"         , byte_size: 2, clock_tick: 8 , function: srl_a }),
     ];
 
 // TODO: add tests

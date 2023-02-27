@@ -18,7 +18,8 @@ fn main() {
     let mut prefixed_encountered = false;
 
     // TODO: Remove
-    let temp_opcodes: Vec<OpCode> = vec![0xCB, 0x01];
+    // LD A => PREFIX => SWAP A
+    let temp_opcodes: Vec<OpCode> = vec![0x3E, 0xCB, 0x37];
 
 
     // TODO fetch opcode from GB game
@@ -36,19 +37,19 @@ fn main() {
                 },
                 GenericInstruction::VALUE(instr) => {
                     // TODO: Parse next byte as value
-                    instr.execute(&mut memory, 1)
+                    instr.execute(&mut memory, 0b1111_0000);
                 },
                 GenericInstruction::FAR(instr) => {
                     // TODO: Parse next two bytes as value
-                    instr.execute(&mut memory, 0xFF00)
+                    instr.execute(&mut memory, 0xFF00);
                 },
                 GenericInstruction::NEAR(instr) => {
                     // TODO: Parse next byte as value
-                    instr.execute(&mut memory, 0x0F)
+                    instr.execute(&mut memory, 0x0F);
                 },
                 GenericInstruction::OFFSET(instr) => {
                     // TODO: Parse next byte as value
-                    instr.execute(&mut memory, -2)
+                    instr.execute(&mut memory, -2);
                 },
             }
 
