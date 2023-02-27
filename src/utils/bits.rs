@@ -1,3 +1,4 @@
+use crate::utils::log::log;
 use crate::utils::traits::Integer;
 use crate::utils::types::{Value, WideValue};
 
@@ -36,6 +37,19 @@ pub fn assign_bit<T: Integer + std::ops::Shl<usize, Output = T>>(old_value: T, b
 
     let new_value = (old_value & !(<u8 as Into<T>>::into(1) << bit_index)) | (<u8 as Into<T>>::into(status as u8) << bit_index);
     // log!("UTILS", format!("{0:#0width$b}[{2}] ({0}) = {3} => {1:#0width$b} ({1})", old_value, new_value, bit_index, status as u8, width = bit_size(old_value) + 2));
+    return new_value;
+}
+
+pub fn swap<T: Integer + std::ops::Shl<usize, Output = T> + std::ops::Shr<usize, Output = T>>(old_value: T) -> T {
+    let bit_size_half = bit_size(old_value) / 2;
+
+    let high = old_value >> bit_size_half;
+    let low = old_value & ((<u8 as Into<T>>::into(1) << (bit_size_half + 1)) - <u8 as Into<T>>::into(1));
+
+    let new_value = (low << bit_size_half) + high;
+
+    log!("UTILS", format!("{:#0width$b} => {:#0width$b}", old_value, new_value, width = bit_size(old_value) + 2));
+
     return new_value;
 }
 

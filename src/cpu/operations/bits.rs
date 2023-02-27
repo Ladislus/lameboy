@@ -1,5 +1,5 @@
 use crate::cpu::memory::Memory;
-use crate::utils::bits::{assign_bit, bit_size, clear_bit, get_bit, max_bit_index, set_bit};
+use crate::utils::bits::{assign_bit, bit_size, clear_bit, get_bit, max_bit_index, set_bit, swap};
 use crate::utils::log::log;
 use crate::utils::types::{FarAddress, Void};
 
@@ -149,15 +149,7 @@ macro_rules! template_swap {
     ($memory: expr, $field: expr) => {
         unsafe {
             let old_value = $field;
-
-            let bit_size_half = bit_size(old_value) / 2;
-
-            let high = old_value >> bit_size_half;
-            let low = old_value & ((1 << (bit_size_half + 1)) - 1);
-
-            let new_value = (low << bit_size_half) + high;
-
-            log!("OPERATION", format!("{:#0width$b}=> {:#0width$b}", old_value, new_value, width = bit_size(old_value) + 2));
+            let new_value = swap(old_value);
 
             $field = new_value;
 
