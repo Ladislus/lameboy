@@ -211,8 +211,6 @@ pub static INSTRUCTIONS: [GenericInstruction; 256] = [
     GenericInstruction::VOID(  Instruction { opcode: 0xC8, disassembly: "RET Z"         , byte_size: 1, clock_tick: 8 , function: ret_z }),
     GenericInstruction::VOID(  Instruction { opcode: 0xC9, disassembly: "RET"           , byte_size: 1, clock_tick: 16, function: ret }),
     GenericInstruction::FAR(   Instruction { opcode: 0xCA, disassembly: "JP Z, a16"     , byte_size: 3, clock_tick: 12, function: jp_z_a16 }),
-    // TODO: $CB is the prefix for wide operations, so find a way to manage this
-    // I will probably just check before executing an ops to check if it was the prefix, so the instruction doesn't need any function
     GenericInstruction::VOID(  Instruction { opcode: 0xCB, disassembly: "PREFIX"        , byte_size: 1, clock_tick: 4 , function: prefix }),
     GenericInstruction::FAR(   Instruction { opcode: 0xCC, disassembly: "CALL Z, a16"   , byte_size: 3, clock_tick: 12, function: call_z_a16 }),
     GenericInstruction::FAR(   Instruction { opcode: 0xCD, disassembly: "CALL a16"      , byte_size: 3, clock_tick: 24, function: call_a16 }),
