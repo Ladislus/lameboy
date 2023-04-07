@@ -47,23 +47,23 @@ impl RegisterGroup {
     pub fn get_bc(&self) -> WideValue { unsafe { return self.BC.as_wide; } }
     pub fn set_bc(&mut self, value: WideValue) { self.BC.as_wide = value; }
     pub fn get_b(&self) -> Value { unsafe { return self.BC.as_pair.0; } }
-    pub fn set_b(&mut self, value: Value) { self.BC.as_pair.0 = value; }
+    // pub fn set_b(&mut self, value: Value) { self.BC.as_pair.0 = value; }
     pub fn get_c(&self) -> Value { unsafe { return self.BC.as_pair.1; } }
-    pub fn set_c(&mut self, value: Value) { self.BC.as_pair.1 = value; }
+    // pub fn set_c(&mut self, value: Value) { self.BC.as_pair.1 = value; }
 
     pub fn get_de(&self) -> WideValue { unsafe { return self.DE.as_wide; } }
     pub fn set_de(&mut self, value: WideValue) { self.DE.as_wide = value; }
     pub fn get_d(&self) -> Value { unsafe { return self.DE.as_pair.0; } }
-    pub fn set_d(&mut self, value: Value) { self.DE.as_pair.0 = value; }
+    // pub fn set_d(&mut self, value: Value) { self.DE.as_pair.0 = value; }
     pub fn get_e(&self) -> Value { unsafe { return self.DE.as_pair.1; } }
-    pub fn set_e(&mut self, value: Value) { self.DE.as_pair.1 = value; }
+    // pub fn set_e(&mut self, value: Value) { self.DE.as_pair.1 = value; }
 
     pub fn get_hl(&self) -> WideValue { unsafe { return self.HL.as_wide; } }
     pub fn set_hl(&mut self, value: WideValue) { self.HL.as_wide = value; }
     pub fn get_h(&self) -> Value { unsafe { return self.HL.as_pair.0; } }
-    pub fn set_h(&mut self, value: Value) { self.HL.as_pair.0 = value; }
+    // pub fn set_h(&mut self, value: Value) { self.HL.as_pair.0 = value; }
     pub fn get_l(&self) -> Value { unsafe { return self.HL.as_pair.1; } }
-    pub fn set_l(&mut self, value: Value) { self.HL.as_pair.1 = value; }
+    // pub fn set_l(&mut self, value: Value) { self.HL.as_pair.1 = value; }
 
     pub fn get_zero_flag(&self) -> bool { return get_bit(self.get_f(), ZERO_FLAG_OFFSET); }
     pub fn set_zero_flag(&mut self, status: bool) { self.set_f(assign_bit(self.get_f(), ZERO_FLAG_OFFSET, status) & CLEAR_MASK); }
@@ -88,10 +88,10 @@ impl std::fmt::Debug for RegisterGroup {
                 .field("HL", &format_args!("({}, {}) | {}", self.HL.as_pair.0, self.HL.as_pair.1, self.HL.as_wide))
                 .field("SP", &self.SP)
                 .field("PC", &self.PC)
-                .field("Z", &(self.get_zero_flag() as u8))
-                .field("S", &(self.get_subtraction_flag() as u8))
-                .field("HC", &(self.get_half_carry_flag() as u8))
-                .field("C", &(self.get_carry_flag() as u8))
+                .field("Z", &u8::from(self.get_zero_flag()))
+                .field("S", &u8::from(self.get_subtraction_flag()))
+                .field("HC", &u8::from(self.get_half_carry_flag()))
+                .field("C", &u8::from(self.get_carry_flag()))
                 .finish()
         }
     }

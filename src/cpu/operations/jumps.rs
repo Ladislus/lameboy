@@ -1,5 +1,6 @@
 use crate::cpu::memory::Memory;
 use crate::cpu::operations::misc::ei;
+use crate::utils::conversions::offset_to_far_address;
 use crate::utils::types::{AddressOffset, FarAddress, Void};
 
 //  #############################
@@ -46,25 +47,25 @@ pub fn ret(memory: &mut Memory, _value: Void) {
     memory.registers.PC = memory.stack.pop_wide(&mut memory.registers.SP);
 }
 
-pub fn reti(memory: &mut Memory, _value: Void) {
-    ei(memory, _value);
-    ret(memory, _value);
+pub fn reti(memory: &mut Memory, value: Void) {
+    ei(memory, value);
+    ret(memory, value);
 }
 
-pub fn ret_z(memory: &mut Memory, _value: Void) {
-    if memory.registers.get_zero_flag() { ret(memory, _value) }
+pub fn ret_z(memory: &mut Memory, value: Void) {
+    if memory.registers.get_zero_flag() { ret(memory, value) }
 }
 
-pub fn ret_nz(memory: &mut Memory, _value: Void) {
-    if !memory.registers.get_zero_flag() { ret(memory, _value); }
+pub fn ret_nz(memory: &mut Memory, value: Void) {
+    if !memory.registers.get_zero_flag() { ret(memory, value); }
 }
 
-pub fn ret_c(memory: &mut Memory, _value: Void) {
-    if memory.registers.get_carry_flag() { ret(memory, _value); }
+pub fn ret_c(memory: &mut Memory, value: Void) {
+    if memory.registers.get_carry_flag() { ret(memory, value); }
 }
 
-pub fn ret_nc(memory: &mut Memory, _value: Void) {
-    if !memory.registers.get_carry_flag() { ret(memory, _value); }
+pub fn ret_nc(memory: &mut Memory, value: Void) {
+    if !memory.registers.get_carry_flag() { ret(memory, value); }
 }
 
 //  #############################
@@ -106,7 +107,7 @@ pub fn jr_r8(memory: &mut Memory, value: AddressOffset) {
     // Label:
     //     JR Label  ; infinite loop; encoded offset of -2
     // To do "safe" signed + unsigned operation, do a wrapping add with both operands interpreted as unsigned
-    memory.registers.PC = memory.registers.PC.wrapping_add(value as FarAddress);
+    memory.registers.PC = memory.registers.PC.wrapping_add(offset_to_far_address(value));
 }
 
 pub fn jr_z_r8(memory: &mut Memory, value: AddressOffset) {

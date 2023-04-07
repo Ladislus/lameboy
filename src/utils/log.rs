@@ -14,7 +14,7 @@ macro_rules! function_name {
     }};
 }
 
-#[allow(unused_imports)]
+// Re-export macro to avoid using 'macro_use'
 pub(crate) use function_name;
 
 #[cfg(debug_assertions)]
@@ -31,4 +31,5 @@ macro_rules! log {
     ($prefix:literal, $msg:expr) => ();
 }
 
+// Re-export macro to avoid using 'macro_use'
 pub(crate) use log;

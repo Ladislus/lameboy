@@ -1,5 +1,6 @@
 use crate::cpu::memory::Memory;
 use crate::utils::bits::check_half_carry_wide_add;
+use crate::utils::conversions::offset_to_far_address;
 use crate::utils::types::{AddressOffset, FarAddress, NearAddress, Value, Void, WideValue};
 
 //  #############################
@@ -7,11 +8,14 @@ use crate::utils::types::{AddressOffset, FarAddress, NearAddress, Value, Void, W
 //  #############################
 
 macro_rules! template_ld {
-    ($field: expr, $value: ident) => {
+    ($field: expr, $value: expr) => {
         $field = $value;
     };
+}
+
+macro_rules! template_ld_unsafe {
     ($field: expr, $value: expr) => {
-        unsafe { $field = $value; }
+        unsafe { template_ld!($field, $value); }
     };
 }
 
@@ -32,27 +36,27 @@ pub fn ld_a_a(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_a_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_a_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_a_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_a_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_a_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_a_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.AF.as_pair.0, memory.registers.HL.as_pair.1);
 }
 
 pub fn ldh_a_a8_addr(memory: &mut Memory, value: NearAddress) {
@@ -110,7 +114,7 @@ pub fn ld_b_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_b_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_b_b(_memory: &mut Memory, _value: Void) {
@@ -120,23 +124,23 @@ pub fn ld_b_b(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_b_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_b_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_b_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_b_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_b_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.BC.as_pair.0, memory.registers.HL.as_pair.1);
 }
 
 pub fn ld_b_hl_addr(memory: &mut Memory, _value: Void) {
@@ -150,11 +154,11 @@ pub fn ld_c_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_c_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_c_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_c_c(_memory: &mut Memory, _value: Void) {
@@ -164,19 +168,19 @@ pub fn ld_c_c(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_c_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_c_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_c_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_c_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.BC.as_pair.1, memory.registers.HL.as_pair.1);
 }
 
 pub fn ld_c_hl_addr(memory: &mut Memory, _value: Void) {
@@ -200,15 +204,15 @@ pub fn ld_d_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_d_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_d_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_d_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_d_d(_memory: &mut Memory, _value: Void) {
@@ -218,15 +222,15 @@ pub fn ld_d_d(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_d_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_d_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_d_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.DE.as_pair.0, memory.registers.HL.as_pair.1);
 }
 
 pub fn ld_d_hl_addr(memory: &mut Memory, _value: Void) {
@@ -240,19 +244,19 @@ pub fn ld_e_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_e_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_e_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_e_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_e_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_e_e(_memory: &mut Memory, _value: Void) {
@@ -262,11 +266,11 @@ pub fn ld_e_e(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_e_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_e_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.DE.as_pair.1, memory.registers.HL.as_pair.1);
 }
 
 pub fn ld_e_hl_addr(memory: &mut Memory, _value: Void) {
@@ -286,23 +290,23 @@ pub fn ld_h_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_h_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_h_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_h_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_h_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_h_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_h_h(_memory: &mut Memory, _value: Void) {
@@ -312,7 +316,7 @@ pub fn ld_h_h(_memory: &mut Memory, _value: Void) {
 }
 
 pub fn ld_h_l(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.0, memory.registers.HL.as_pair.1);
+    template_ld_unsafe!(memory.registers.HL.as_pair.0, memory.registers.HL.as_pair.1);
 }
 
 pub fn ld_h_hl_addr(memory: &mut Memory, _value: Void) {
@@ -326,27 +330,27 @@ pub fn ld_l_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn ld_l_a(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.AF.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.AF.as_pair.0);
 }
 
 pub fn ld_l_b(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.0);
 }
 
 pub fn ld_l_c(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.1);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.BC.as_pair.1);
 }
 
 pub fn ld_l_d(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.0);
 }
 
 pub fn ld_l_e(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.1);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.DE.as_pair.1);
 }
 
 pub fn ld_l_h(memory: &mut Memory, _value: Void) {
-    template_ld!(memory.registers.HL.as_pair.1, memory.registers.HL.as_pair.0);
+    template_ld_unsafe!(memory.registers.HL.as_pair.1, memory.registers.HL.as_pair.0);
 }
 
 pub fn ld_l_l(_memory: &mut Memory, _value: Void) {
@@ -362,7 +366,7 @@ pub fn ld_l_hl_addr(memory: &mut Memory, _value: Void) {
 //  ############ HL #############
 
 pub fn ld_hl_sp_plus_r8(memory: &mut Memory, value: AddressOffset) {
-    let value = value as FarAddress;
+    let value = offset_to_far_address(value);
     let old_value = memory.registers.SP;
 
     let (result, has_overflown) = old_value.overflowing_add(value);

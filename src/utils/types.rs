@@ -11,3 +11,14 @@ pub type AddressOffset = i8;
 
 pub type PairRegister = (Value, Value);
 pub type WideRegister = WideValue;
+
+#[cfg(test)]
+mod tests {
+    use super::{Byte, Value, WideValue};
+
+    #[test]
+    fn test_type_aliases() {
+        assert_eq!(std::mem::size_of::<Value>() * 2, std::mem::size_of::<WideValue>());
+        assert_eq!(std::mem::size_of::<Byte>(), std::mem::size_of::<Value>());
+    }
+}

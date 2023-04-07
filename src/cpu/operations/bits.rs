@@ -164,9 +164,9 @@ macro_rules! template_bit {
             let value = $field;
             let index = $index as usize;
 
-            debug_assert!($index < max_bit_index(value));
+            debug_assert!(index < max_bit_index(value));
 
-            let popped_bit = get_bit(value, $index);
+            let popped_bit = get_bit(value, index);
 
             $memory.registers.set_zero_flag(popped_bit);
             $memory.registers.set_subtraction_flag(false);
@@ -390,7 +390,7 @@ pub fn rl_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, max_bit_index(old_value));
     let new_value = assign_bit(old_value << 1, 0, old_carry);
 
-    log!("OPERATION", format!("{:#0width$b} + carry: {} => {:#0width$b} + carry: {}", old_value, old_carry as u8, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} + carry: {} => {:#0width$b} + carry: {}", old_value, u8::from(old_carry), new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 
@@ -407,7 +407,7 @@ pub fn rlc_hl_addr(memory: &mut Memory, _value: Void) {
     // Left shift and put back top bit in the lowest bit
     let new_value = assign_bit(old_value << 1, 0, popped_value);
 
-    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 
@@ -424,7 +424,7 @@ pub fn rr_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, 0);
     let new_value = assign_bit(old_value >> 1, max_bit_index(old_value), old_carry);
 
-    log!("OPERATION", format!("{:#0width$b} + carry: {} => {:#0width$b} + carry: {}", old_value, old_carry as u8, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} + carry: {} => {:#0width$b} + carry: {}", old_value, u8::from(old_carry), new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 
@@ -440,7 +440,7 @@ pub fn rrc_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, 0);
     let new_value = assign_bit(old_value >> 1, max_bit_index(old_value), popped_value);
 
-    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     // Left shift and put back top bit in the lowest bit
     memory.write_far_addr(hl_value, new_value);
@@ -561,7 +561,7 @@ pub fn sla_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, max_bit_index(old_value));
     let new_value = old_value << 1;
 
-    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 
@@ -578,7 +578,7 @@ pub fn sra_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, 0);
     let new_value = assign_bit(old_value >> 1, max_bit_index(old_value), top_duplicate);
 
-    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 
@@ -594,7 +594,7 @@ pub fn srl_hl_addr(memory: &mut Memory, _value: Void) {
     let popped_value = get_bit(old_value, 0);
     let new_value = old_value >> 1;
 
-    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, popped_value as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{:#0width$b} => {:#0width$b} + carry: {}", old_value, new_value, u8::from(popped_value), width = bit_size(old_value) + 2));
 
     memory.write_far_addr(hl_value, new_value);
 

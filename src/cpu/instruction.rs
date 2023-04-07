@@ -20,17 +20,17 @@ pub struct Instruction<T> {
 #[derive(Clone, Copy, Debug)]
 pub enum GenericInstruction {
     /// Doesn't take any operand
-    VOID(Instruction<()>),
+    Void(Instruction<()>),
     /// Takes 8-bit data operand                                        [d8]
-    VALUE(Instruction<Value>),
+    Value(Instruction<Value>),
     /// Takes 16-bit little-endian data                                 [d16]
-    WIDE(Instruction<WideValue>),
+    Wide(Instruction<WideValue>),
     /// Takes 8-bit data (offset from $FF00)                            [a8]
-    NEAR(Instruction<NearAddress>),
+    Near(Instruction<NearAddress>),
     /// Takes 16-bit little endian address                              [a16]
-    FAR(Instruction<FarAddress>),
+    Far(Instruction<FarAddress>),
     /// Takes 8-bit signed data, effectively an offset for an address   [r8]
-    OFFSET(Instruction<AddressOffset>),
+    Offset(Instruction<AddressOffset>),
 }
 
 impl<T> std::fmt::Debug for Instruction<T> {
@@ -46,7 +46,7 @@ impl<T> std::fmt::Debug for Instruction<T> {
 
 impl<T> Instruction<T> {
     pub fn execute(&self, memory: &mut Memory, value: T) {
-        log!("INSTRUCTION", format!("Executing {:?}", self));
+        log!("INSTRUCTION", format!("Executing {self:?}"));
         (self.function)(memory, value);
     }
 }

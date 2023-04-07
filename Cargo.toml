@@ -1,7 +1,12 @@
 [package]
 name = "lameboy"
+description = "An umpteenth worthless Game Boy emulator, written in Rust, just to learn how emulators work, improve my understanding of Rust, and have fun (or cry)"
 authors = ["Ladislas 'Ladislus' WALCAK"]
 version = "0.1.0"
+repository = "https://github.com/Ladislus/lameboy"
+license = "MIT"
+keywords = ["emulator", "gameboy"]
+categories = ["emulators", ]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

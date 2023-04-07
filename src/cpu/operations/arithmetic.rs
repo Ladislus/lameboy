@@ -1,7 +1,8 @@
 use crate::cpu::memory::Memory;
 use crate::utils::bits::{check_half_carry_add, check_half_carry_wide_add, check_half_carry_sub, bit_size};
+use crate::utils::conversions::offset_to_far_address;
 use crate::utils::log::log;
-use crate::utils::types::{AddressOffset, FarAddress, Value, Void};
+use crate::utils::types::{AddressOffset, Value, Void};
 
 //  #############################
 //  #         Template          #
@@ -41,72 +42,96 @@ macro_rules! template_dec_value {
 
 macro_rules! template_inc_wide {
     ($field: expr) => {
-        unsafe { $field += 1; }
+        $field += 1;
+    };
+}
+
+macro_rules! template_inc_wide_unsafe {
+    ($field: expr) => {
+        unsafe { template_inc_wide!($field); }
     };
 }
 
 macro_rules! template_dec_wide {
     ($field: expr) => {
-        unsafe { $field -= 1; }
+        $field -= 1;
+    };
+}
+
+macro_rules! template_dec_wide_unsafe {
+    ($field: expr) => {
+        unsafe { template_dec_wide!($field); }
     };
 }
 
 macro_rules! template_add_a {
     ($memory: expr, $field: expr) => {
-        unsafe {
-            let old_value = $memory.registers.get_a();
-            let value = $field;
+        let old_value = $memory.registers.get_a();
+        let value = $field;
 
-            let (result, has_overflown) = old_value.overflowing_add(value);
+        let (result, has_overflown) = old_value.overflowing_add(value);
 
-            $memory.registers.set_a(result);
+        $memory.registers.set_a(result);
 
-            $memory.registers.set_zero_flag(result == 0);
-            $memory.registers.set_subtraction_flag(false);
-            // H => Set if overflow from bit 3.
-            $memory.registers.set_half_carry_flag(check_half_carry_add(old_value, value));
-            // C => Set if overflow from bit 7.
-            $memory.registers.set_carry_flag(has_overflown);
-        }
+        $memory.registers.set_zero_flag(result == 0);
+        $memory.registers.set_subtraction_flag(false);
+        // H => Set if overflow from bit 3.
+        $memory.registers.set_half_carry_flag(check_half_carry_add(old_value, value));
+        // C => Set if overflow from bit 7.
+        $memory.registers.set_carry_flag(has_overflown);
+    };
+}
+
+macro_rules! template_add_a_unsafe {
+    ($memory: expr, $field: expr) => {
+        unsafe { template_add_a!($memory, $field); }
     };
 }
 
 macro_rules! template_add_hl {
     ($memory: expr, $field: expr) => {
-        unsafe {
-            let old_value = $memory.registers.get_hl();
-            let value = $field;
+        let old_value = $memory.registers.get_hl();
+        let value = $field;
 
-            let (result, has_overflown) = old_value.overflowing_add(value);
+        let (result, has_overflown) = old_value.overflowing_add(value);
 
-            $memory.registers.set_hl(result);
+        $memory.registers.set_hl(result);
 
-            $memory.registers.set_subtraction_flag(false);
-            // H => Set if overflow from bit 11.
-            $memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, value));
-            // C => Set if overflow from bit 15.
-            $memory.registers.set_carry_flag(has_overflown);
-        }
+        $memory.registers.set_subtraction_flag(false);
+        // H => Set if overflow from bit 11.
+        $memory.registers.set_half_carry_flag(check_half_carry_wide_add(old_value, value));
+        // C => Set if overflow from bit 15.
+        $memory.registers.set_carry_flag(has_overflown);
+    };
+}
+
+macro_rules! template_add_hl_unsafe {
+    ($memory: expr, $field: expr) => {
+        unsafe { template_add_hl!($memory, $field); }
     };
 }
 
 macro_rules! template_sub_a {
     ($memory: expr, $field: expr) => {
-        unsafe {
-            let old_value = $memory.registers.get_a();
-            let value = $field;
+        let old_value = $memory.registers.get_a();
+        let value = $field;
 
-            let (result, has_overflown) = old_value.overflowing_sub(value);
+        let (result, has_overflown) = old_value.overflowing_sub(value);
 
-            $memory.registers.set_a(result);
+        $memory.registers.set_a(result);
 
-            $memory.registers.set_zero_flag(result == 0);
-            $memory.registers.set_subtraction_flag(true);
-            // H => Set if borrow from bit 4.
-            $memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, value));
-            // C => Set if overflow from bit 15.
-            $memory.registers.set_carry_flag(has_overflown);
-        }
+        $memory.registers.set_zero_flag(result == 0);
+        $memory.registers.set_subtraction_flag(true);
+        // H => Set if borrow from bit 4.
+        $memory.registers.set_half_carry_flag(check_half_carry_sub(old_value, value));
+        // C => Set if overflow from bit 15.
+        $memory.registers.set_carry_flag(has_overflown);
+    };
+}
+
+macro_rules! template_sub_a_unsafe {
+    ($memory: expr, $field: expr) => {
+        unsafe { template_sub_a!($memory, $field); }
     };
 }
 
@@ -158,15 +183,15 @@ pub fn inc_hl_addr(memory: &mut Memory, _value: Void) {
 //  ######### 16-bits ###########
 
 pub fn inc_bc(memory: &mut Memory, _value: Void) {
-    template_inc_wide!(memory.registers.BC.as_wide);
+    template_inc_wide_unsafe!(memory.registers.BC.as_wide);
 }
 
 pub fn inc_de(memory: &mut Memory, _value: Void) {
-    template_inc_wide!(memory.registers.DE.as_wide);
+    template_inc_wide_unsafe!(memory.registers.DE.as_wide);
 }
 
 pub fn inc_hl(memory: &mut Memory, _value: Void) {
-    template_inc_wide!(memory.registers.HL.as_wide);
+    template_inc_wide_unsafe!(memory.registers.HL.as_wide);
 }
 
 pub fn inc_sp(memory: &mut Memory, _value: Void) {
@@ -221,15 +246,15 @@ pub fn dec_hl_addr(memory: &mut Memory, _value: Void) {
 //  ######### 16-bits ###########
 
 pub fn dec_bc(memory: &mut Memory, _value: Void) {
-    template_dec_wide!(memory.registers.BC.as_wide);
+    template_dec_wide_unsafe!(memory.registers.BC.as_wide);
 }
 
 pub fn dec_de(memory: &mut Memory, _value: Void) {
-    template_dec_wide!(memory.registers.DE.as_wide);
+    template_dec_wide_unsafe!(memory.registers.DE.as_wide);
 }
 
 pub fn dec_hl(memory: &mut Memory, _value: Void) {
-    template_dec_wide!(memory.registers.HL.as_wide);
+    template_dec_wide_unsafe!(memory.registers.HL.as_wide);
 }
 
 pub fn dec_sp(memory: &mut Memory, _value: Void) {
@@ -247,31 +272,31 @@ pub fn add_a_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn add_a_a(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.AF.as_pair.0);
+    template_add_a_unsafe!(memory, memory.registers.AF.as_pair.0);
 }
 
 pub fn add_a_b(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.BC.as_pair.0);
+    template_add_a_unsafe!(memory, memory.registers.BC.as_pair.0);
 }
 
 pub fn add_a_c(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.BC.as_pair.1);
+    template_add_a_unsafe!(memory, memory.registers.BC.as_pair.1);
 }
 
 pub fn add_a_d(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.DE.as_pair.0);
+    template_add_a_unsafe!(memory, memory.registers.DE.as_pair.0);
 }
 
 pub fn add_a_e(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.DE.as_pair.1);
+    template_add_a_unsafe!(memory, memory.registers.DE.as_pair.1);
 }
 
 pub fn add_a_h(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.HL.as_pair.0);
+    template_add_a_unsafe!(memory, memory.registers.HL.as_pair.0);
 }
 
 pub fn add_a_l(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.HL.as_pair.1);
+    template_add_a_unsafe!(memory, memory.registers.HL.as_pair.1);
 }
 
 pub fn add_a_hl_addr(memory: &mut Memory, _value: Void) {
@@ -281,15 +306,15 @@ pub fn add_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  ######### 16-bits ###########
 
 pub fn add_hl_bc(memory: &mut Memory, _value: Void) {
-    template_add_hl!(memory, memory.registers.BC.as_wide);
+    template_add_hl_unsafe!(memory, memory.registers.BC.as_wide);
 }
 
 pub fn add_hl_de(memory: &mut Memory, _value: Void) {
-    template_add_hl!(memory, memory.registers.DE.as_wide);
+    template_add_hl_unsafe!(memory, memory.registers.DE.as_wide);
 }
 
 pub fn add_hl_hl(memory: &mut Memory, _value: Void) {
-    template_add_hl!(memory, memory.registers.HL.as_wide);
+    template_add_hl_unsafe!(memory, memory.registers.HL.as_wide);
 }
 
 pub fn add_hl_sp(memory: &mut Memory, _value: Void) {
@@ -299,7 +324,7 @@ pub fn add_hl_sp(memory: &mut Memory, _value: Void) {
 // TODO: Check
 pub fn add_sp_r8(memory: &mut Memory, value: AddressOffset) {
     let old_value = memory.registers.SP;
-    let value = value as FarAddress;
+    let value = offset_to_far_address(value);
 
     let (result, has_overflown) = old_value.overflowing_add(value);
 
@@ -322,31 +347,31 @@ pub fn sub_a_d8(memory: &mut Memory, value: Value) {
 }
 
 pub fn sub_a_a(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.AF.as_pair.0);
+    template_sub_a_unsafe!(memory, memory.registers.AF.as_pair.0);
 }
 
 pub fn sub_a_b(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.BC.as_pair.0);
+    template_sub_a_unsafe!(memory, memory.registers.BC.as_pair.0);
 }
 
 pub fn sub_a_c(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.BC.as_pair.1);
+    template_sub_a_unsafe!(memory, memory.registers.BC.as_pair.1);
 }
 
 pub fn sub_a_d(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.DE.as_pair.0);
+    template_sub_a_unsafe!(memory, memory.registers.DE.as_pair.0);
 }
 
 pub fn sub_a_e(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.DE.as_pair.1);
+    template_sub_a_unsafe!(memory, memory.registers.DE.as_pair.1);
 }
 
 pub fn sub_a_h(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.HL.as_pair.0);
+    template_sub_a_unsafe!(memory, memory.registers.HL.as_pair.0);
 }
 
 pub fn sub_a_l(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.HL.as_pair.1);
+    template_sub_a_unsafe!(memory, memory.registers.HL.as_pair.1);
 }
 
 pub fn sub_a_hl_addr(memory: &mut Memory, _value: Void) {
@@ -358,39 +383,39 @@ pub fn sub_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #############################
 
 pub fn adc_a_d8(memory: &mut Memory, value: Value) {
-    template_add_a!(memory, value + (memory.registers.get_carry_flag() as Value));
+    template_add_a!(memory, value + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_a(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.AF.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_b(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.BC.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.BC.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_c(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.BC.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.BC.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_d(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.DE.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.DE.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_e(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.DE.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.DE.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_h(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.HL.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.HL.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_l(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.registers.HL.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_add_a_unsafe!(memory, memory.registers.HL.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn adc_a_hl_addr(memory: &mut Memory, _value: Void) {
-    template_add_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (memory.registers.get_carry_flag() as Value));
+    template_add_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (Value::from(memory.registers.get_carry_flag())));
 }
 
 //  #############################
@@ -398,39 +423,39 @@ pub fn adc_a_hl_addr(memory: &mut Memory, _value: Void) {
 //  #############################
 
 pub fn sbc_a_d8(memory: &mut Memory, value: Value) {
-    template_sub_a!(memory, value + (memory.registers.get_carry_flag() as Value));
+    template_sub_a!(memory, value + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_a(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.AF.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.AF.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_b(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.BC.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.BC.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_c(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.BC.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.BC.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_d(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.DE.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.DE.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_e(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.DE.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.DE.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_h(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.HL.as_pair.0 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.HL.as_pair.0 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_l(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.registers.HL.as_pair.1 + (memory.registers.get_carry_flag() as Value));
+    template_sub_a_unsafe!(memory, memory.registers.HL.as_pair.1 + (Value::from(memory.registers.get_carry_flag())));
 }
 
 pub fn sbc_a_hl_addr(memory: &mut Memory, _value: Void) {
-    template_sub_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (memory.registers.get_carry_flag() as Value));
+    template_sub_a!(memory, memory.read_far_addr(memory.registers.get_hl()) + (Value::from(memory.registers.get_carry_flag())));
 }
 
 //  #############################
@@ -472,7 +497,7 @@ pub fn daa(memory: &mut Memory, _value: Void) {
     let mut new_value = old_value;
 
     if old_half_carry_flag || (old_value & 0b1111) > 9  {
-        new_value = new_value.wrapping_add(0x06)
+        new_value = new_value.wrapping_add(0x06);
     }
 
     if old_carry_flag || ((old_value >> 4) & 0b1111) > 9 {
@@ -487,5 +512,5 @@ pub fn daa(memory: &mut Memory, _value: Void) {
     memory.registers.set_zero_flag(new_value == 0);
     memory.registers.set_half_carry_flag(false);
 
-    log!("OPERATION", format!("{} ({:#0width$b}) + C={} + H={} => {} ({:#0width$b}) + C={} + Z={}", old_value, old_value, old_carry_flag as u8, old_half_carry_flag as u8, new_value, new_value, memory.registers.get_carry_flag() as u8, memory.registers.get_zero_flag() as u8, width = bit_size(old_value) + 2));
+    log!("OPERATION", format!("{} ({:#0width$b}) + C={} + H={} => {} ({:#0width$b}) + C={} + Z={}", old_value, old_value, u8::from(old_carry_flag), u8::from(old_half_carry_flag), new_value, new_value, u8::from(memory.registers.get_carry_flag()), u8::from(memory.registers.get_zero_flag()), width = bit_size(old_value) + 2));
 }

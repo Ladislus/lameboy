@@ -7,11 +7,11 @@ mod cpu;
 mod gui;
 mod utils;
 
-const PROGRAM_NAME: &'static str = "LameBoy";
-const PROGRAM_VERSION: &'static str = "0.0.1";
+const PROGRAM_NAME: &str = "LameBoy";
+const PROGRAM_VERSION: &str = "0.0.1";
 
 fn main() {
-    log!("PROGRAM", format!("{} v{}", PROGRAM_NAME, PROGRAM_VERSION));
+    log!("PROGRAM", format!("{PROGRAM_NAME} v{PROGRAM_VERSION}"));
 
     // Allocate 1024 bytes of memory
     let mut memory = Memory::new(1024);
@@ -30,27 +30,27 @@ fn main() {
             prefixed_encountered = true;
         } else {
             match instruction_from_opcode(opcode, prefixed_encountered) {
-                GenericInstruction::VOID(instr) => instr.execute(&mut memory, ()),
-                GenericInstruction::WIDE(instr) => {
+                GenericInstruction::Void(instr) => instr.execute(&mut memory, ()),
+                GenericInstruction::Wide(instr) => {
                     // TODO: Parse next two bytes as value
                     instr.execute(&mut memory, 1);
-                },
-                GenericInstruction::VALUE(instr) => {
+                }
+                GenericInstruction::Value(instr) => {
                     // TODO: Parse next byte as value
                     instr.execute(&mut memory, 0b1111_0000);
-                },
-                GenericInstruction::FAR(instr) => {
+                }
+                GenericInstruction::Far(instr) => {
                     // TODO: Parse next two bytes as value
                     instr.execute(&mut memory, 0xFF00);
-                },
-                GenericInstruction::NEAR(instr) => {
+                }
+                GenericInstruction::Near(instr) => {
                     // TODO: Parse next byte as value
                     instr.execute(&mut memory, 0x0F);
-                },
-                GenericInstruction::OFFSET(instr) => {
+                }
+                GenericInstruction::Offset(instr) => {
                     // TODO: Parse next byte as value
                     instr.execute(&mut memory, -2);
-                },
+                }
             }
 
             prefixed_encountered = false;

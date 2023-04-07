@@ -23,7 +23,7 @@ impl Stack {
         let (result, has_overflown) = self.base_address.overflowing_sub(addr as FarAddress);
 
         debug_assert!(!has_overflown);
-        log!("STACK", format!("Address: {:#X} correspond to index {}", addr, result));
+        log!("STACK", format!("Address: {addr:#X} correspond to index {result}"));
 
         return result as usize;
     }
