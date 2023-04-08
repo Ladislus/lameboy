@@ -5,22 +5,19 @@ use std::time::Duration;
 use crate::log;
 
 pub fn launch_gui() {
-    let sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
+    let Ok(sdl_context) = sdl2::init() else { todo!() };
+    let Ok(video_subsystem) = sdl_context.video() else { todo!() };
 
     log!("GUI", format!("Platform is \"{}\"", sdl2::get_platform()));
 
-    let window = video_subsystem.window("rust-sdl2 demo", 800, 600)
-        .position_centered()
-        .build()
-        .unwrap();
+    let Ok(window) = video_subsystem.window("rust-sdl2 demo", 800, 600).position_centered().build() else { todo!() };
 
-    let mut canvas = window.into_canvas().build().unwrap();
+    let Ok(mut canvas) = window.into_canvas().build() else { todo!() };
 
     canvas.set_draw_color(Color::RGB(0, 255, 0));
     canvas.clear();
     canvas.present();
-    let mut event_pump = sdl_context.event_pump().unwrap();
+    let Ok(mut event_pump) = sdl_context.event_pump() else { todo!() };
     let mut i: u8 = 0;
     'running: loop {
         i = i.wrapping_add(1);

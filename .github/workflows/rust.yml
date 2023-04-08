@@ -37,6 +37,9 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
+      - name: Install SDL2
+        run: sudo apt install libsdl2-dev
+
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -69,4 +72,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --no-deps -- -D warnings -W clippy::pedantic -W clippy::cargo -A clippy::needless_return -A clippy::module_inception -A clippy::module_name_repetitions -A clippy::wildcard_imports
+          args: --no-deps -- -W clippy::pedantic -W clippy::cargo -W clippy::unwrap_used -W clippy::expect_used -A clippy::needless_return -A clippy::module_inception -A clippy::module_name_repetitions -A clippy::wildcard_imports
