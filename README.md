@@ -19,6 +19,8 @@ An umpteenth worthless Game Boy emulator, written in Rust, just to learn how emu
  - [OP Codes description](https://rgbds.gbdev.io/docs/v0.6.0/gbz80.7)
 
 ### Similar projects
-- [Cinoop](https://cturt.github.io/cinoop.html)
-- [0dmg](https://jeremybanks.github.io/0dmg/)
+- [Cinoop](https://github.com/cturt/cinoop)
+- [0dmg](https://github.com/jeremyBanks/0dmg)
+- [IronBoy](https://github.com/nicolas-siplis/IronBoy)
+- [DMG-01](https://github.com/rylev/DMG-01)
 - [rboy](https://github.com/mvdnes/rboy)
